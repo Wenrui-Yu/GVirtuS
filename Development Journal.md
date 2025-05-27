@@ -153,6 +153,10 @@ Test failed due to std::string exception
 [  FAILED  ] CuDNNTestWithCatch.LRNForward (2 ms)
 ```
 
+**Date:** 26-05-2025 - 30-05-2025
+
+OpenCV currently supports CUDA 12.6 with a few known incompatibilities, such as with RNN and LSTM modules. However, it encounters issues linking to GVirtuS: it cannot locate the remote libraries without a redirection. To properly resolve this, OpenCV needs to be recompiled. CMake struggles to detect the local installation path of the standard CUDA Toolkit, leading to a configuration error. One workaround is to temporarily redirect the CUDA Toolkit environment variable to point to your GVirtuS installation path during the CMake configuration process. This way, necessary environment variables are exported and explicitly tell OpenCV where to find the GVirtuS libraries and headers.
+
 ## **Functionality Summary Table** (continuously updated)
 
 | **Library** | **Unsupported** | **Functional** | **Untested** |

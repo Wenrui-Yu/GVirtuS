@@ -61,8 +61,8 @@ YOLO::YOLO(Net_config config)
 	//this->net.setPreferableBackend(cv::dnn::DNN_BACKEND_OPENCV);
 	//this->net.setPreferableTarget(cv::dnn::DNN_TARGET_CPU);
 
-        this->net.setPreferableBackend(DNN_BACKEND_CUDA);
-        this->net.setPreferableTarget(DNN_TARGET_CUDA);
+        this->net.setPreferableBackend(cv::dnn::DNN_BACKEND_CUDA);
+        this->net.setPreferableTarget(cv::dnn::DNN_TARGET_CUDA);
 
 	
 	// //std::cout << cv::getBuildInformation() << std::endl;

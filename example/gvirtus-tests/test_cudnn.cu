@@ -188,19 +188,6 @@ TEST_F(CuDNNTestWithCatch, ErrorString) {
     });
 }
 
-/*
-TEST_F(CuDNNTestWithCatch, SetStreamDestroy) {
-    RunWithExceptionHandling([](){
-        cudnnHandle_t handle;
-        cudaStream_t stream;
-        CUDNN_CHECK(cudnnCreate(&handle));
-        CUDA_CHECK(cudaStreamCreate(&stream));
-        CUDNN_CHECK(cudnnSetStream(handle, stream));
-        CUDA_CHECK(cudaStreamDestroy(stream));
-        CUDNN_CHECK(cudnnDestroy(handle));
-    });
-}
-*/
 TEST_F(CuDNNTestWithCatch, AddTensor) {
     RunWithExceptionHandling([](){
         cudnnHandle_t handle;

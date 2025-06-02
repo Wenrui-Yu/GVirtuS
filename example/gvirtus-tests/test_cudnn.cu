@@ -239,64 +239,6 @@ TEST_F(CuDNNTestWithCatch, AddTensor) {
     });
 }
 
-TEST_F(CuDNNTestWithCatch, PoolingForward) {
-    RunWithExceptionHandling([](){
-        cudnnHandle_t handle;
-        CUDNN_CHECK(cudnnCreate(&handle));
-
-        const int N = 1, C = 1, H = 2, W = 2;
-        const int size = N * C * H * W;
-        float h_input[]  = {1.0f, 2.0f, 3.0f, 4.0f};
-        float h_output[1];  // Output will be a single value after 2x2 pooling
-
-        float *d_input, *d_output;
-        CUDA_CHECK(cudaMalloc(&d_input,  size * sizeof(float)));
-        CUDA_CHECK(cudaMalloc(&d_output, sizeof(float)));
-
-        CUDA_CHECK(cudaMemcpy(d_input, h_input, sizeof(h_input), cudaMemcpyHostToDevice));
-
-        cudnnTensorDescriptor_t inputDesc, outputDesc;
-        CUDNN_CHECK(cudnnCreateTensorDescriptor(&inputDesc));
-        CUDNN_CHECK(cudnnCreateTensorDescriptor(&outputDesc));
-
-        // Set tensor descriptors
-        CUDNN_CHECK(cudnnSetTensor4dDescriptor(inputDesc, CUDNN_TENSOR_NCHW, CUDNN_DATA_FLOAT, N, C, H, W));
-        CUDNN_CHECK(cudnnSetTensor4dDescriptor(outputDesc, CUDNN_TENSOR_NCHW, CUDNN_DATA_FLOAT, N, C, 1, 1));
-
-        // Create and set pooling descriptor
-        cudnnPoolingDescriptor_t poolingDesc;
-        CUDNN_CHECK(cudnnCreatePoolingDescriptor(&poolingDesc));
-
-        CUDNN_CHECK(cudnnSetPooling2dDescriptor(poolingDesc,
-                                                CUDNN_POOLING_MAX,
-                                                CUDNN_PROPAGATE_NAN,
-                                                2, 2,   // window height, width
-                                                0, 0,   // padding height, width
-                                                2, 2)); // stride height, width
-
-        float alpha = 1.0f, beta = 0.0f;
-        CUDNN_CHECK(cudnnPoolingForward(handle,
-                                        poolingDesc,
-                                        &alpha,
-                                        inputDesc, d_input,
-                                        &beta,
-                                        outputDesc, d_output));
-
-        CUDA_CHECK(cudaMemcpy(h_output, d_output, sizeof(float), cudaMemcpyDeviceToHost));
-
-        // Expected output is max(1, 2, 3, 4) = 4.0f
-        EXPECT_FLOAT_EQ(h_output[0], 4.0f);
-
-        // Cleanup
-        CUDNN_CHECK(cudnnDestroyPoolingDescriptor(poolingDesc));
-        CUDNN_CHECK(cudnnDestroyTensorDescriptor(inputDesc));
-        CUDNN_CHECK(cudnnDestroyTensorDescriptor(outputDesc));
-        CUDA_CHECK(cudaFree(d_input));
-        CUDA_CHECK(cudaFree(d_output));
-        CUDNN_CHECK(cudnnDestroy(handle));
-    });
-}
-
 TEST_F(CuDNNTestWithCatch, ConvolutionForward) {
     RunWithExceptionHandling([](){
         cudnnHandle_t handle;

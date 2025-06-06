@@ -4966,11 +4966,11 @@ extern "C" cudnnStatus_t CUDNNWINAPI cudnnGetAlgorithmPerformance(const cudnnAlg
      return CudnnFrontend::GetExitCode();
 }
 
-extern "C" cudnnStatus_t CUDNNWINAPI cudnnDestroyAlgorithmPerformance(cudnnAlgorithmPerformance_t *algoPerf) {
+extern "C" cudnnStatus_t CUDNNWINAPI cudnnDestroyAlgorithmPerformance(cudnnAlgorithmPerformance_t *algoPerf, int numberToDestroy) {
 
     CudnnFrontend::Prepare();
 
-    CudnnFrontend::AddHostPointerForArguments<cudnnAlgorithmPerformance_t>(algoPerf);
+    CudnnFrontend::AddDevicePointerForArguments(algoPerf);
 
     CudnnFrontend::Execute("cudnnDestroyAlgorithmPerformance");
 

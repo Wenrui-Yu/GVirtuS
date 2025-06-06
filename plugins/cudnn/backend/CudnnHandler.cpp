@@ -5192,7 +5192,7 @@ CUDNN_ROUTINE_HANDLER(FindRNNBackwardDataAlgorithmEx) {
     Logger logger = Logger::getInstance(LOG4CPLUS_TEXT("FindRNNBackwardDataAlgorithmEx"));
 
     cudnnHandle_t handle = in->Get<cudnnHandle_t>();
-    cont cudnnRNNDescriptor_t rnnDesc = in->Get<cudnnRNNDescriptor_t>();
+    const cudnnRNNDescriptor_t rnnDesc = in->Get<cudnnRNNDescriptor_t>();
     const int seqLength = in->Get<int>();
     const cudnnTensorDescriptor_t yDesc = in->Get<cudnnTensorDescriptor_t>();
     const void *y = in->GetFromMarshal<void*>();
@@ -5231,8 +5231,8 @@ CUDNN_ROUTINE_HANDLER(FindRNNBackwardDataAlgorithmEx) {
         out->AddMarshal<void*>(dx);
         out->AddMarshal<void*>(dhx);
         out->AddMarshal<void*>(dcx);
-        out->Add<int>(returnedAlgoCount);
-        out->AddMarshal<cudnnAlgorithmPerformance_t>(perfResults, returnedAlgoCount);
+        out->AddMarshal<int>(returnedAlgoCount);
+        out->Add<cudnnAlgorithmPerformance_t>(perfResults, returnedAlgoCount);
         out->AddMarshal<void*>(reserveSpace);
     } catch(string e) {
         LOG4CPLUS_DEBUG(logger, e);
@@ -5453,10 +5453,23 @@ CUDNN_ROUTINE_HANDLER(DestroyAlgorithmPerformance) {
 
     cudnnAlgorithmPerformance_t algoPerf = in->Get<cudnnAlgorithmPerformance_t>();
      
-    cudnnStatus_t cs = cudnnDestroyAlgorithmPerformance(&algoPerf);
+    cudnnStatus_t cs = cudnnDestroyAlgorithmPerformance(&algoPerf,1);
     LOG4CPLUS_DEBUG(logger, "cudnnDestroyAlgorithmPerformance Executed");
       
     return std::make_shared<Result>(cs);
+}
+
+CUDNN_ROUTINE_HANDLER(DestroyRNNDataDescriptor) {
+     Logger logger = Logger::getInstance(LOG4CPLUS_TEXT("DestroyRNNDataDescriptor"));
+
+     cudnnRNNDataDescriptor_t rnnDataDesc = in->Get<cudnnRNNDataDescriptor_t>();
+     
+     cudnnStatus_t cs = cudnnDestroyRNNDataDescriptor(rnnDataDesc);
+     
+     
+     LOG4CPLUS_DEBUG(logger, "cudnnDestroyRNNDataDescriptor Executed");
+     
+     return std::make_shared<Result>(cs);
 }
 
 CUDNN_ROUTINE_HANDLER(GetAlgorithmSpaceSize) {
@@ -5531,19 +5544,6 @@ CUDNN_ROUTINE_HANDLER(CreateRNNDataDescriptor) {
      LOG4CPLUS_DEBUG(logger, "cudnnCreateRNNDataDescriptor Executed");
     
     return std::make_shared<Result>(cs, out);
-}
-
-CUDNN_ROUTINE_HANDLER(DestroyRNNDataDescriptor) {
-     Logger logger = Logger::getInstance(LOG4CPLUS_TEXT("DestroyRNNDataDescriptor"));
-
-     cudnnRNNDataDescriptor_t rnnDataDesc = in->Get<cudnnRNNDataDescriptor_t>();
-     
-     cudnnStatus_t cs = cudnnDestroyRNNDataDescriptor(rnnDataDesc);
-     
-     
-     LOG4CPLUS_DEBUG(logger, "cudnnDestroyRNNDataDescriptor Executed");
-     
-     return std::make_shared<Result>(cs);
 }
 
 CUDNN_ROUTINE_HANDLER(SetRNNDataDescriptor) {

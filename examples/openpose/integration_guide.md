@@ -1,7 +1,3 @@
-Here's a clean, well-structured version of your notes for a GitHub README or documentation file:
-
----
-
 # 🧠 OpenPose with GVirtuS Integration (06/06/2025)
 
 This guide details how to run OpenPose inside a Docker container with GVirtuS support, addresses common issues, and outlines multiple approaches for integrating OpenPose with GVirtuS (including caveats).
@@ -198,4 +194,3 @@ Enable GPU in the wrapper config and let GVirtuS attempt CUDA virtualization:
 
 ---
 
-Let me know if you'd like this formatted as a `README.md` or need help testing alternatives.

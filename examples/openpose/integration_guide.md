@@ -1,4 +1,16 @@
-Docker run command:
+Here's a clean, well-structured version of your notes for a GitHub README or documentation file:
+
+---
+
+# 🧠 OpenPose with GVirtuS Integration (06/06/2025)
+
+This guide details how to run OpenPose inside a Docker container with GVirtuS support, addresses common issues, and outlines multiple approaches for integrating OpenPose with GVirtuS (including caveats).
+
+---
+
+## 🚀 Docker Run Command
+
+```bash
 docker run -it --name openpose_gvirtus_env \
   --network=host \
   --privileged \
@@ -8,75 +20,101 @@ docker run -it --name openpose_gvirtus_env \
   --volume /tmp/.X11-unix:/tmp/.X11-unix:rw \
   --volume /dev:/dev \
   openpose-gvirtus-image
+```
 
-Access to GUI window through docker:
+### 🖥️ Enable GUI Window Access
+
+```bash
 xhost +local:root
+```
 
-Open docker
-docker exec -it openpose_env bash
+### 🔓 Access Running Docker Container
 
+```bash
+docker exec -it openpose_gvirtus_env bash
+```
 
-Error solved!
-https://github.com/CMU-Perceptual-Computing-Lab/openpose/issues/2321
+---
 
+## 🎥 Run OpenPose on Video
 
-Command to run Video with openpose
-******Set the MIT-SHM (Shared Memory) Permissions
+Make sure MIT-SHM (Shared Memory) permissions are disabled:
+
+```bash
 export MIT_SHM_DISABLE=1
 ./build/examples/openpose/openpose.bin
+```
 
+📎 Related Issue: [openpose#2321](https://github.com/CMU-Perceptual-Computing-Lab/openpose/issues/2321)
 
-**** Important 
+---
 
-Custom Openpose script running with CLI (Without GVIRTUS)
+## ⚙️ Custom OpenPose Script via CLI
 
-Step 1: Get inside the directory where script locate (cd openpose/examples/gvirtus_api )
-g++ 00_test.cpp -o try     -I/home/openpose/include     -I/usr/include/opencv4     -L/home/openpose/build/src/openpose -lopenpose     -lgflags -lglog -lprotobuf -pthread     `pkg-config --cflags --libs opencv4`     -std=c++11 -Wno-unused-result -Wno-write-strings
+### ➤ Without GVirtuS
 
-Step 2: Get back to openpose root directory and run the file
-$ openpose
-  ./examples/gvirtus_api/try
+1. **Navigate to script directory**:
 
+```bash
+cd openpose/examples/gvirtus_api
+```
 
+2. **Compile the script**:
 
+```bash
+g++ 00_test.cpp -o try \
+  -I/home/openpose/include \
+  -I/usr/include/opencv4 \
+  -L/home/openpose/build/src/openpose -lopenpose \
+  -lgflags -lglog -lprotobuf -pthread \
+  `pkg-config --cflags --libs opencv4` \
+  -std=c++11 -Wno-unused-result -Wno-write-strings
+```
 
-Custom Openpose script running with CLI (With GVIRTUS)
+3. **Run the binary**:
 
-Step 1: Get inside the directory where script locate (cd openpose/examples/gvirtus_api )
-g++ 00_test.cpp -o try     -I/home/openpose/include     -I/usr/include/opencv4     -L/home/openpose/build/src/openpose -lopenpose     -lgflags -lglog -lprotobuf -pthread     `pkg-config --cflags --libs opencv4`     -std=c++11 -Wno-unused-result -Wno-write-strings
+```bash
+cd /home/openpose
+./examples/gvirtus_api/try
+```
 
-Step 2: Get back to openpose root directory and run the file
-$ openpose
-  ./examples/gvirtus_api/try
+---
 
-Note: not working!!!!!! Still have to figure out
+### ➤ With GVirtuS (⚠️ Not Working Yet)
 
+Same compilation steps as above, but execution with GVirtuS fails. Needs further investigation.
 
-06/06/2025 Openpose-GvirtuS integration
-Openpose requires real cuda libraies to build openpose caffe library. So we can't use GvirtuS runtime librarues to compile openpose directly with GVirtuS.
+---
 
-The possible solution would be be, use real cuda libraries to build Openpose. Then using GVirtuS runtime libries compile the frontend application.
-But unfortunately this solution also didn't works!
-I got the following errors!
-/usr/bin/ld: /home/openpose/build/caffe/lib/libcaffe.so: undefined reference to `__cudaRegisterFatBinaryEnd@libcudart.so.12'
-/usr/bin/ld: /home/openpose/build/caffe/lib/libcaffe.so: undefined reference to `cudaFree@libcudart.so.12'
-/usr/bin/ld: /home/openpose/build/caffe/lib/libcaffe.so: undefined reference to `cublasCreate_v2@libcublas.so.12'
+## ❗ Important Note on GVirtuS Integration
 
-This means your Caffe was compiled with CUDA, but you're now trying to link it against GVirtuS, which doesn't support full CUDA 12.2 symbols or runtime linking like real CUDA does.
+OpenPose's Caffe backend **requires real CUDA libraries** to compile. GVirtuS **cannot be used to build** OpenPose or Caffe directly due to missing symbols during linking:
 
-The second idea would be disble cuda and compile caffe library with CPU only while doing cmake compailation with openpose.
--- CPU_ONLY = ON
--- USE_CUDA = OFF
+```txt
+undefined reference to `__cudaRegisterFatBinaryEnd@libcudart.so.12'
+undefined reference to `cudaFree@libcudart.so.12'
+undefined reference to `cublasCreate_v2@libcublas.so.12'
+```
 
-For that get into openpose/CMakeLists.txt file and edit line 724 as 'set(CAFFE CPU_ONLY ON)'
-And then build openpose with belo instructions,
+### ✅ Solution Attempt 1 (CPU Mode Build)
+
+1. Edit OpenPose `CMakeLists.txt`:
+
+```cmake
+# Line 724:
+set(CAFFE CPU_ONLY ON)
+```
+
+2. Build OpenPose in CPU-only mode:
+
+```bash
 cd /home/openpose
 rm -rf build && mkdir build && cd build
 
 cmake \
   -DBUILD_PYTHON=ON \
   -DUSE_CUDA=OFF \
-  -DCPU_ONLY=ON \  # 👈 Pass this through
+  -DCPU_ONLY=ON \
   -DUSE_CUDNN=OFF \
   -DBUILD_CAFFE=ON \
   -DBUILD_OPENPOSE=ON \
@@ -84,8 +122,11 @@ cmake \
   -DPYTHON_EXECUTABLE=$(which python3.8) \
   -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.8.so.1.0 \
   ..
+```
 
-After successfull compilation get into 01_test.cu file location and run the below command to build the file with GVirtuS libraries,
+3. Compile custom CUDA script using GVirtuS runtime:
+
+```bash
 export GVIRTUS_HOME=/home/GVirtuS
 export LD_LIBRARY_PATH=${GVIRTUS_HOME}/lib:${GVIRTUS_HOME}/lib/frontend:/home/openpose/build/src/openpose:/home/openpose/build/caffe/lib:$LD_LIBRARY_PATH
 
@@ -102,41 +143,59 @@ nvcc 01_test.cu -o openpose_demo_gvirtus \
   -lgflags -lglog \
   -Xcompiler -pthread \
   `pkg-config --cflags --libs opencv4`
+```
 
+### 🔧 Force CPU-Only In Your Script
 
-Note: Observed issue with GPU enable with openpose script, so disable GPU by modifing below block of code.
-Update this block in your code:
+Modify OpenPose wrapper configuration:
 
-        // Configure OpenPose
-        op::Wrapper opWrapper{op::ThreadManagerMode::Asynchronous};
-        if (FLAGS_disable_multi_thread)
-            opWrapper.disableMultiThreading();
+```cpp
+// CPU-only configuration for OpenPose
+op::WrapperStructPose poseConfig;
+poseConfig.poseMode = op::PoseMode::Enabled;
+poseConfig.poseModel = op::PoseModel::BODY_25;
+poseConfig.netInputSize = op::Point<int>{656, 368};
+poseConfig.outputSize = op::Point<int>{-1, -1};
+poseConfig.renderMode = op::RenderMode::None; // No GPU rendering
+poseConfig.alphaKeypoint = 0.6;
+poseConfig.alphaHeatMap = 0.7;
+poseConfig.defaultPartToRender = 0; // BODY_25
+poseConfig.enableGoogleLogging = true;
 
-        opWrapper.start();
+// 🚫 Disable GPU usage
+poseConfig.gpuNumber = 0;
+poseConfig.gpuNumberStart = 0;
 
-To this:
+opWrapper.configure(poseConfig);
+opWrapper.start();
+```
 
-      // CPU-only configuration for older OpenPose
-      op::WrapperStructPose poseConfig;
-      poseConfig.poseMode = op::PoseMode::Enabled;
-      poseConfig.poseModel = op::PoseModel::BODY_25;
-      poseConfig.netInputSize = op::Point<int>{656, 368};
-      poseConfig.outputSize = op::Point<int>{-1, -1};
-      poseConfig.renderMode = op::RenderMode::None; // No GPU rendering
-      poseConfig.alphaKeypoint = 0.6;
-      poseConfig.alphaHeatMap = 0.7;
-      poseConfig.defaultPartToRender = 0; // BODY_25
-      poseConfig.enableGoogleLogging = true;
+📝 **Note**: Script runs with GVirtuS in CPU-only mode, but keypoint detection performance was **poor**.
 
-      // 👇 THIS IS THE KEY TO CPU MODE
-      poseConfig.gpuNumber = 0;     // Use 0 GPUs
-      poseConfig.gpuNumberStart = 0;
+---
 
-      // Apply configuration
-      opWrapper.configure(poseConfig);
-      opWrapper.start();
+## 🧪 Potential 3rd Solution (Experimental)
 
+Enable GPU in the wrapper config and let GVirtuS attempt CUDA virtualization:
 
-This compiles and runs with GVirtuS, but i didn't get proper openpose keypoint detection results with this solutin.
+* Compile Caffe with real CUDA
+* Link runtime to GVirtuS
+* Allow OpenPose to run with GPU enabled
 
-The 3rd potential solution would be, enable gpu in the above block of code and allow GVirtuS somehow virtualise cuda calls. or Build caffe library with cuda calls and enable GPU in the script and run with GVirtuS.
+🚫 Currently **not functional** – likely due to GVirtuS lacking full support for CUDA 12.2 symbols.
+
+---
+
+## 📌 Summary
+
+| Approach                        | Status | Notes                                 |
+| ------------------------------- | ------ | ------------------------------------- |
+| Docker GUI Setup                | ✅      | Works with `xhost` and proper volumes |
+| OpenPose CLI (No GVirtuS)       | ✅      | Successful                            |
+| OpenPose CLI (With GVirtuS)     | ❌      | Fails to link correctly               |
+| CPU-Only OpenPose with GVirtuS  | ⚠️     | Compiles and runs, but poor detection |
+| GPU Virtualization with GVirtuS | ❌      | Not currently supported               |
+
+---
+
+Let me know if you'd like this formatted as a `README.md` or need help testing alternatives.

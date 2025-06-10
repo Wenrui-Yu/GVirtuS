@@ -184,13 +184,9 @@ Enable GPU in the wrapper config and let GVirtuS attempt CUDA virtualization:
 
 ## 📌 Summary
 
-| Approach                        | Status | Notes                                 |
-| ------------------------------- | ------ | ------------------------------------- |
-| Docker GUI Setup                | ✅      | Works with `xhost` and proper volumes |
-| OpenPose CLI (No GVirtuS)       | ✅      | Successful                            |
-| OpenPose CLI (With GVirtuS)     | ❌      | Fails to link correctly               |
-| CPU-Only OpenPose with GVirtuS  | ⚠️     | Compiles and runs, but poor detection |
-| GPU Virtualization with GVirtuS | ❌      | Not currently supported               |
-
+Mode        	              Builds?	Runs?	Real GPU Usage?	 Output Quality
+Real CUDA	                    ✅	   ✅	   ✅	   ✅            Full
+GVirtuS + CPU_ONLY   	        ✅	   ✅	   ❌	   ⚠️            Low
+GVirtuS + real CUDA build	    ❌	  ❌	   ❌	   ❌        (linker errors)
 ---
 

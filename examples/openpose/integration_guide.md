@@ -184,9 +184,11 @@ Enable GPU in the wrapper config and let GVirtuS attempt CUDA virtualization:
 
 ## 📌 Summary
 
-Mode        	              Builds?	Runs?	Real GPU Usage?	 Output Quality
-Real CUDA	                    ✅	   ✅	   ✅	   ✅            Full
-GVirtuS + CPU_ONLY   	        ✅	   ✅	   ❌	   ⚠️            Low
-GVirtuS + real CUDA build	    ❌	  ❌	   ❌	   ❌        (linker errors)
+| Mode                        | Builds? | Runs? | Real GPU Usage? | Output Quality |
+|----------------------------|:-------:|:-----:|:----------------:|:---------------:|
+| Real CUDA                  | ✅      | ✅    | ✅               | ✅ Full         |
+| GVirtuS + CPU_ONLY         | ✅      | ✅    | ❌               | ⚠️ Low          |
+| GVirtuS + real CUDA build  | ❌      | ❌    | ❌               | ❌ (linker errors) |
+
 ---
 

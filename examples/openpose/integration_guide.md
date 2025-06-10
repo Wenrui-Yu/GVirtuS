@@ -192,3 +192,148 @@ Enable GPU in the wrapper config and let GVirtuS attempt CUDA virtualization:
 
 ---
 
+## List of missing functions in GVirtuS to integrate with openpose
+
+Here's a full segregation of the missing symbols by CUDA library:
+
+---
+
+### 🟢 **`libcudart.so.12` (CUDA Runtime)**
+
+These functions are part of the CUDA Runtime API and are generally defined in `libcudart`.
+
+```
+1.  __cudaRegisterFatBinaryEnd
+2.  cudaFree
+6.  cudaStreamCreateWithFlags
+7.  cudaEventElapsedTime
+10. __cudaRegisterFunction
+13. cudaGetDeviceProperties_v2
+14. cudaMemset
+15. cudaMemGetInfo
+16. cudaStreamDestroy
+17. cudaGetLastError
+18. cudaEventRecord
+19. cudaMallocHost
+22. cudaEventSynchronize
+38. __cudaPopCallConfiguration
+39. cudaMemcpyAsync
+41. cudaGetDevice
+46. cudaStreamCreate
+47. cudaMemcpy
+51. cudaLaunchKernel
+58. cudaFreeHost
+62. __cudaPushCallConfiguration
+64. cudaEventCreate
+70. __cudaRegisterFatBinary
+71. cudaGetDeviceCount
+73. cudaMalloc
+76. cudaPeekAtLastError
+78. cudaGetErrorString
+81. cudaStreamSynchronize
+83. __cudaRegisterVar
+85. cudaEventDestroy
+86. cudaSetDevice
+87. __cudaUnregisterFatBinary
+```
+
+---
+
+### 🔵 **`libcublas.so.12` (cuBLAS - Linear Algebra)**
+
+These are from NVIDIA's cuBLAS library, which is used for GPU-accelerated linear algebra.
+
+```
+5.  cublasCreate_v2
+8.  cublasGetStream_v2
+12. cublasSaxpy_v2
+21. cublasDestroy_v2
+25. cublasSetStream_v2
+35. cublasSgemm_v2
+42. cublasDcopy_v2
+48. cublasDgemv_v2
+49. cublasDasum_v2
+53. cublasSdot_v2
+57. cublasSgemv_v2
+59. cublasSasum_v2
+60. cublasDgemm_v2
+65. cublasDscal_v2
+67. cublasSscal_v2
+69. cublasDdot_v2
+74. cublasDaxpy_v2
+75. cublasScopy_v2
+```
+
+---
+
+### 🔴 **`libcudnn.so.8` (cuDNN - Deep Neural Networks)**
+
+These belong to NVIDIA's cuDNN library, for accelerating deep learning primitives.
+
+```
+3.  cudnnSetActivationDescriptor
+4.  cudnnDestroyConvolutionDescriptor
+9.  cudnnConvolutionBackwardData
+11. cudnnDivisiveNormalizationForward
+20. cudnnGetConvolutionBackwardDataAlgorithm_v7
+23. cudnnCreateTensorDescriptor
+24. cudnnDestroy
+26. cudnnGetConvolutionForwardAlgorithm_v7
+27. cudnnCreateActivationDescriptor
+28. cudnnDivisiveNormalizationBackward
+29. cudnnConvolutionBackwardBias
+30. cudnnSetConvolution2dDescriptor
+31. cudnnSetTensor4dDescriptorEx
+32. cudnnSoftmaxBackward
+33. cudnnSoftmaxForward
+34. cudnnCreate
+36. cudnnLRNCrossChannelBackward
+37. cudnnDestroyFilterDescriptor
+40. cudnnSetStream
+43. cudnnConvolutionBackwardFilter
+44. cudnnSetFilter4dDescriptor
+45. cudnnSetLRNDescriptor
+50. cudnnCreateFilterDescriptor
+52. cudnnCreatePoolingDescriptor
+54. cudnnDestroyPoolingDescriptor
+55. cudnnDestroyTensorDescriptor
+56. cudnnPoolingBackward
+61. cudnnPoolingForward
+63. cudnnSetPooling2dDescriptor
+66. cudnnCreateLRNDescriptor
+68. cudnnActivationBackward
+72. cudnnDestroyActivationDescriptor
+77. cudnnAddTensor
+79. cudnnLRNCrossChannelForward
+80. cudnnActivationForward
+82. cudnnConvolutionForward
+84. cudnnCreateConvolutionDescriptor
+```
+
+---
+
+### Summary Table
+
+| Library       | Missing Symbols Count |
+| ------------- | --------------------- |
+| **libcudart** | 34                    |
+| **libcublas** | 19                    |
+| **libcudnn**  | 34                    |
+
+---
+
+### 🔧 Suggestion for GVirtuS Integration
+
+For each of the above symbols, GVirtuS will likely need wrappers (client/server RPC functions) if not already implemented. Check the respective plugin directories:
+
+* `gvirtus-plugin-cuda`
+* `gvirtus-plugin-cublas`
+* `gvirtus-plugin-cudnn`
+
+If a function is missing:
+
+* Create a server-side C++ wrapper calling the native CUDA/cuBLAS/cuDNN function.
+* Create a client-side function with the same signature that calls into GVirtuS via the RPC mechanism.
+* Add the signature to the relevant `.xml` or `.json` API mapping file if used.
+
+---

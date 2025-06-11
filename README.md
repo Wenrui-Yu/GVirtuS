@@ -157,6 +157,11 @@ Currently supported transmission means are:
 "suite": "infiniband-rdma",
 "protocol": "ib", 
 ```
+* **RDMA over RoCE**
+``` 
+"suite": "roce-rdma",
+"protocol": "roce",
+```
 
 To run `gvirtus-backend` server application, perform the following command:
 

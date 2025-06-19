@@ -11,7 +11,6 @@
 #include "Endpoint.h"
 #include "Endpoint_Tcp.h"
 #include "Endpoint_Rdma.h"
-
 //#define DEBUG
 
 namespace gvirtus::communicators {
@@ -40,7 +39,8 @@ namespace gvirtus::communicators {
                                                         "http",
                                                         "oldtcp",
                                                         "ws",
-                                                        "ib"
+                                                        "ib",
+                                                       
             };
 
             // Supported secure communicators

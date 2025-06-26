@@ -3,10 +3,10 @@
 #include <gvirtus/common/JSON.h>
 #include <memory>
 #include <nlohmann/json.hpp>
+
 #include "Endpoint.h"
 #include "Endpoint_Rdma.h"
 #include "Endpoint_Tcp.h"
-
 //#define DEBUG
 
 namespace gvirtus::communicators {
@@ -39,8 +39,15 @@ class EndpointFactory {
         auto end = common::JSON<Endpoint_Rdma>(json_path).parser();
         ptr = std::make_shared<Endpoint_Rdma>(end);
     }
+    else if ("roce-rdma" == j["communicator"][ind_endpoint]["endpoint"].at("suite")) {
+#ifdef DEBUG
+    std::cout << "EndpointFactory::get_endpoint() found rdma-roce endpoint (reusing Endpoint_Rdma)" << std::endl;
+#endif
+    auto end = common::JSON<Endpoint_Rdma>(json_path).parser();
+    ptr = std::make_shared<Endpoint_Rdma>(end);
+}
     else {
-        throw "EndpointFactory::get_endpoint(): Your suite is not compatible!";
+        throw std::runtime_error("EndpointFactory::get_endpoint(): Your suite is not compatible!");
     }
 
     ind_endpoint++;

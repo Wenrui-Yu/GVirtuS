@@ -1,8 +1,9 @@
 cmake_minimum_required(VERSION 3.17)
-project(GVirtuS)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_EXTENSIONS ON)
+
+project(GVirtuS)
 
 if("$ENV{GVIRTUS_HOME}" STREQUAL "")
     message(STATUS "Setting GVIRTUS_HOME=$ENV{HOME}/GVirtuS")
@@ -15,9 +16,12 @@ endif()
 
 include(cmake/GVirtuS.cmake)
 
-add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/nlohmann/json.hpp
-        COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/include/nlohmann
-        COMMAND curl -L https://github.com/nlohmann/json/releases/download/v3.7.3/json.hpp -o ${CMAKE_CURRENT_BINARY_DIR}/include/nlohmann/json.hpp)
+add_custom_command(
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/nlohmann/json.hpp
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/include/nlohmann
+    COMMAND ${CMAKE_COMMAND} -DOUTPUT_FILE=${CMAKE_CURRENT_BINARY_DIR}/include/nlohmann/json.hpp -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/download_json.cmake
+)
+
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/include)
 
 add_library(gvirtus-common SHARED
@@ -32,10 +36,7 @@ add_library(gvirtus-common SHARED
         src/common/Observer.cpp
         src/common/SignalException.cpp
         src/common/SignalState.cpp
-        ##src/communicators/rdma/ktmrdma.cpp
         src/common/Util.cpp)
-
-add_dependencies(gvirtus-common log4cplus)
 
 target_link_libraries(gvirtus-common stdc++fs ${CMAKE_DL_LIBS} ${LIBLOG4CPLUS} rdmacm ibverbs)
 
@@ -44,8 +45,11 @@ target_link_libraries(gvirtus-common stdc++fs ${CMAKE_DL_LIBS} ${LIBLOG4CPLUS} r
 
 gvirtus_install_target(gvirtus-common)
 install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include/nlohmann DESTINATION ${GVIRTUS_HOME}/include)
-install(DIRECTORY ${EXTERNAL_INSTALL_LOCATION}/include/log4cplus DESTINATION ${GVIRTUS_HOME}/include)
-install(DIRECTORY ${EXTERNAL_INSTALL_LOCATION}/lib DESTINATION ${GVIRTUS_HOME})
+if (LOG4CPLUS_EXTERNALLY_DOWNLOADED)
+    add_dependencies(gvirtus-common log4cplus)
+    install(DIRECTORY ${EXTERNAL_INSTALL_LOCATION}/include/log4cplus DESTINATION ${GVIRTUS_HOME}/include)
+    install(DIRECTORY ${EXTERNAL_INSTALL_LOCATION}/lib DESTINATION ${GVIRTUS_HOME})
+endif()
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/etc DESTINATION ${GVIRTUS_HOME})
 
 add_library(gvirtus-communicators SHARED
@@ -85,7 +89,8 @@ add_executable(gvirtus-backend
         src/backend/Backend.cpp
         src/backend/main.cpp
         src/backend/Process.cpp
-        src/backend/Property.cpp)
+        src/backend/Property.cpp
+        plugins/cudnn/backend/HandleManager.h)
 target_link_libraries(gvirtus-backend gvirtus-communicators Threads::Threads rdmacm ibverbs)
 gvirtus_install_target(gvirtus-backend)
 
@@ -94,8 +99,10 @@ add_subdirectory(plugins/cudart)
 add_subdirectory(plugins/cufft)
 add_subdirectory(plugins/curand)
 add_subdirectory(plugins/cudnn)
-#add_subdirectory(plugins/cusolver)
-#add_subdirectory(plugins/cusparse)
+add_subdirectory(plugins/cusolver)
+add_subdirectory(plugins/cusparse)
+
+enable_testing()
+add_subdirectory(tests)
 
 #add_subdirectory(tools/protocol-generator)
-

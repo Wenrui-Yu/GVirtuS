@@ -34,10 +34,13 @@ namespace gvirtus::communicators {
 
         char preregisteredBuffer[1024 * 5];
         ibv_mr * preregisteredMr;
+        
+        bool isRoce = false;
 
     public:
         RdmaCommunicator() = default;
-        RdmaCommunicator(char * hostname, char * port);
+        RdmaCommunicator(const std::string& hostname, const std::string& port);
+        RdmaCommunicator(const std::string& hostname, const std::string& port, bool isRoce);
         RdmaCommunicator(rdma_cm_id * rdmaCmId);
 
         ~RdmaCommunicator();

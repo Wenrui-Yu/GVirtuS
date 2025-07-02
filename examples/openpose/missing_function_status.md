@@ -40,4 +40,4 @@
 | `cudaSetDevice`               | ❓           | ❌      | ❓       |                            |
 | `__cudaUnregisterFatBinary`   | ❓           | ❌      | ❓       |                            |
 
----
+----

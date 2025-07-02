@@ -1,10 +1,11 @@
 
 ---
 
-## 🟢 libcudart.so.12 (CUDA Runtime) – GVirtuS Support Matrix
+## 🟢 libcudart.so.12 (CUDA Runtime) - libcudart missing function
 
 | Function Name                 | Implemented | Tested | Working | Notes                      |
 | ----------------------------- | ----------- | ------ | ------- | -------------------------- |
+<<<<<<< HEAD
 | `__cudaRegisterFatBinaryEnd`  | ❓           | ❌      | ❓       |                            |
 | `cudaFree`                    | ✅           | ✅      | ✅       | Basic unit test passed     |
 | `cudaStreamCreateWithFlags`   | ❓           | ❌      | ❓       |                            |
@@ -39,5 +40,39 @@
 | `cudaEventDestroy`            | ✅           | ✅      | ✅       | Paired with event creation |
 | `cudaSetDevice`               | ❓           | ❌      | ❓       |                            |
 | `__cudaUnregisterFatBinary`   | ❓           | ❌      | ❓       |                            |
+=======
+| `__cudaRegisterFatBinaryEnd`  | ✅           | ✅      | ❓       |                            |
+| `cudaFree`                    | ✅           | ✅      | ❓       | Basic unit test passed     |
+| `cudaStreamCreateWithFlags`   | ✅           | ✅      | ❓       |                            |
+| `cudaEventElapsedTime`        | ✅           | ✅      | ❓       |                            |
+| `__cudaRegisterFunction`      | ✅           | ✅      | ❓       |                            |
+| `cudaGetDeviceProperties_v2`  | ✅           | ✅      | ❓       |                            |
+| `cudaMemset`                  | ✅           | ✅      | ❓       |                            |
+| `cudaMemGetInfo`              | ✅           | ✅      | ❓       |                            |
+| `cudaStreamDestroy`           | ✅           | ✅      | ❓       |                            |
+| `cudaGetLastError`            | ❌           | ❌      | ❓       |  Function failed during unit test |
+| `cudaEventRecord`             | ✅           | ✅      | ❓       |                            |
+| `cudaMallocHost`              | ✅           | ✅      | ❓       |                            |
+| `cudaEventSynchronize`        | ✅           | ✅      | ❓       |                            |
+| `__cudaPopCallConfiguration`  | ✅           | ✅      | ❓       |                            |
+| `cudaMemcpyAsync`             | ✅           | ✅      | ❓       |                            |
+| `cudaGetDevice`               | ✅           | ✅      | ❓       |                            |
+| `cudaStreamCreate`            | ✅           | ✅      | ❓       |                            |
+| `cudaMemcpy`                  | ✅           | ✅      | ❓       |                            |
+| `cudaLaunchKernel`            | ❌           | ❌      | ❓       | Function failed during unit test |
+| `cudaFreeHost`                | ✅           | ✅      | ❓       |                            |
+| `__cudaPushCallConfiguration` | ✅           | ✅      | ❓       |                            |
+| `cudaEventCreate`             | ✅           | ✅      | ❓       |                            |
+| `__cudaRegisterFatBinary`     | ✅           | ✅      | ❓       |                            |
+| `cudaGetDeviceCount`          | ✅           | ✅      | ❓       |                            |
+| `cudaMalloc`                  | ✅           | ✅      | ❓       |                            |
+| `cudaPeekAtLastError`         | ✅           | ✅      | ❓       |                            |
+| `cudaGetErrorString`          | ❌           | ❌      | ❓       |  Function failed during unit test |
+| `cudaStreamSynchronize`       | ✅           | ✅      | ❓       |                            |
+| `__cudaRegisterVar`           | ✅           | ✅      | ❓       |                            |
+| `cudaEventDestroy`            | ✅           | ✅      | ❓       |                            |
+| `cudaSetDevice`               | ✅           | ✅      | ❓       |                            |
+| `__cudaUnregisterFatBinary`   | ✅           | ✅      | ❓       |                            |
+>>>>>>> 456566b10eb9d221f8c5e60578b61c8b142dff5b
 
 ----

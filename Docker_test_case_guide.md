@@ -2,7 +2,7 @@
 
 ```bash
 # Clone the GVirtuS main repository:
-git clone https://github.com/ecn-aau/GVirtuS
+git clone -b gvirtus-cuda-12-ref https://github.com/ecn-aau/GVirtuS
 
 # Change into the repo directory:
 cd GVirtuS
@@ -22,17 +22,19 @@ First, build a Docker image that includes all dependencies needed for compiling 
 
 ```Dockerfile
 FROM nvidia/cuda:12.6.3-cudnn-devel-ubuntu22.04
-
-ENV DEBIAN_FRONTEND=noninteractive
-
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential cmake git curl wget unzip nano vim pkg-config \
-    python3 python3-pip ca-certificates libgtest-dev libprotobuf-dev librdmacm-dev \
-    libibverbs-dev libmesa-dev \
-    protobuf-compiler libgoogle-glog-dev libgflags-dev libssl-dev && \
-    rm -rf /var/lib/apt/lists/*
-
-RUN cd /usr/src/gtest && cmake CMakeLists.txt && make && cp lib/*.a /usr/lib
+RUN apt update && apt install -y --no-install-recommends \
+    build-essential \
+    libxmu-dev \
+    libxi-dev \
+    libgl-dev \
+    libosmesa-dev \
+    liblog4cplus-dev \
+    librdmacm-dev \
+    libibverbs-dev \
+    libgtest-dev \
+    liblz4-dev \
+    cmake \
+    && rm -rf /var/lib/apt/lists/*
 
 ENV GVIRTUS_HOME=/usr/local/gvirtus
 ENV GVIRTUS_LOGLEVEL=0
@@ -87,11 +89,30 @@ This simplifies running your environment and tests with one-liners.
 ### 📄 Example `Makefile`:
 
 ```makefile
+.PHONY: docker-build-push-dev docker-build-push-prod run-gvirtus-backend-dev run-gvirtus-tests stop-gvirtus
+
+docker-build-push-dev:
+	docker buildx build \
+		--platform linux/amd64 \
+		--push \
+		--no-cache \
+		-f docker/dev/Dockerfile \
+		-t darsh916/gvirtus-dependencies:cuda12.6.3-cudnn-ubuntu22.04 \
+		.
+
+docker-build-push-prod:
+	docker buildx build \
+		--platform linux/amd64 \
+		--push \
+		--no-cache \
+		-f docker/prod/Dockerfile \
+		-t darsh916//gvirtus:cuda12.6.3-cudnn-ubuntu22.04 \
+		.
+
 run-gvirtus-backend-dev:
 	docker run \
 		--rm \
 		-it \
-		--gpus all \
 		-v ./cmake:/gvirtus/cmake/ \
 		-v ./etc:/gvirtus/etc/ \
 		-v ./include:/gvirtus/include/ \
@@ -101,24 +122,22 @@ run-gvirtus-backend-dev:
 		-v ./tests:/gvirtus/tests/ \
 		-v ./CMakeLists.txt:/gvirtus/CMakeLists.txt \
 		-v ./docker/dev/entrypoint.sh:/entrypoint.sh \
+		-v ./examples:/gvirtus/examples/ \
 		--entrypoint /entrypoint.sh \
 		--name gvirtus \
-		yourusername/gvirtus-dependencies:cuda12.6.3-cudnn-ubuntu22.04
-
-docker-build-push-dev:
-	docker buildx build \
-		--platform linux/amd64 \
-		--push \
-		--no-cache \
-		-f docker/dev/Dockerfile \
-		-t yourusername/gvirtus-dependencies:cuda12.6.3-cudnn-ubuntu22.04 \
-		.
+		--runtime=nvidia \
+		darsh916//gvirtus-dependencies:cuda12.6.3-cudnn-ubuntu22.04
 
 run-gvirtus-tests:
-	docker exec -it gvirtus bash -c "cd /gvirtus/build && ctest --output-on-failure"
+	docker exec \
+		-it gvirtus \
+		bash -c \
+		'export LD_LIBRARY_PATH=$$GVIRTUS_HOME/lib/frontend:$$LD_LIBRARY_PATH && \
+			cd /gvirtus/build && \
+			ctest --output-on-failure'
 
 stop-gvirtus:
-	docker stop gvirtus || true
+	docker stop gvirtus
 
 ```
 

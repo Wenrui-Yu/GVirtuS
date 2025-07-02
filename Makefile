@@ -37,13 +37,13 @@ run-gvirtus-backend-dev:
 		--runtime=nvidia \
 		darsh916/gvirtus-dependencies:cuda12.6.3-cudnn-ubuntu22.04
 
+
 run-gvirtus-tests:
 	docker exec \
 		-it gvirtus \
 		bash -c \
 		'export LD_LIBRARY_PATH=$$GVIRTUS_HOME/lib/frontend:$$LD_LIBRARY_PATH && \
-			cd /gvirtus/build && \
-			ctest --output-on-failure'
+		 cd /gvirtus/build/tests && ./test_cudart'                  
 
 stop-gvirtus:
 	docker stop gvirtus

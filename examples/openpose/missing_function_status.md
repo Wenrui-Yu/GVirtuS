@@ -18,6 +18,8 @@
 | `cudaEventRecord`             | ✅           | ✅      | ✅       | Part of elapsed time test  |
 | `cudaMallocHost`              | ❓           | ❌      | ❓       |                            |
 | `cudaEventSynchronize`        | ✅           | ✅      | ✅       |                            |
+
+
 | `__cudaPopCallConfiguration`  | ❓           | ❌      | ❓       |                            |
 | `cudaMemcpyAsync`             | ❓           | ❌      | ❓       |                            |
 | `cudaGetDevice`               | ❓           | ❌      | ❓       |                            |

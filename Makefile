@@ -6,7 +6,7 @@ docker-build-push-dev:
 		--push \
 		--no-cache \
 		-f docker/dev/Dockerfile \
-		-t taslanidis/gvirtus-dependencies:cuda12.6.3-cudnn-ubuntu22.04 \
+		-t darsh916/gvirtus-dependencies:cuda12.6.3-cudnn-ubuntu22.04 \
 		.
 
 docker-build-push-prod:
@@ -15,7 +15,7 @@ docker-build-push-prod:
 		--push \
 		--no-cache \
 		-f docker/prod/Dockerfile \
-		-t taslanidis/gvirtus:cuda12.6.3-cudnn-ubuntu22.04 \
+		-t darsh916/gvirtus:cuda12.6.3-cudnn-ubuntu22.04 \
 		.
 
 run-gvirtus-backend-dev:
@@ -35,7 +35,7 @@ run-gvirtus-backend-dev:
 		--entrypoint /entrypoint.sh \
 		--name gvirtus \
 		--runtime=nvidia \
-		taslanidis/gvirtus-dependencies:cuda12.6.3-cudnn-ubuntu22.04
+		darsh916/gvirtus-dependencies:cuda12.6.3-cudnn-ubuntu22.04
 
 run-gvirtus-tests:
 	docker exec \

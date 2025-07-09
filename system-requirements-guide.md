@@ -8,7 +8,7 @@ This document outlines compatibility between CUDA 12.6 Docker images, host NVIDI
 
 ## 🔧 Key Compatibility Observations
 
-### 1. **CUDA 12.6 Docker Image on NVIDIA Driver 570**
+### 1. **CUDA 12.6 Docker Image on NVIDIA Driver 570** (or 560? onwards as recommended at at the main Readme)
 
 * ✅ Works **perfectly** on hosts with **NVIDIA driver 570**.
 * ✅ Even if the host has a **different CUDA version installed (e.g., 11.5)**, the Docker container will work fine.

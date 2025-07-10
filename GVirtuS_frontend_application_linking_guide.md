@@ -1,4 +1,3 @@
-```markdown
 # GVirtuS Frontend Linking Guide
 
 This guide walks through how to properly set up and verify GVirtuS integration with your CUDA frontend application. It ensures that fake CUDA libraries provided by GVirtuS are correctly linked and used during compilation and execution.

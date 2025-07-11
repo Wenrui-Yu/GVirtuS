@@ -152,21 +152,121 @@ Example JSON snippet:
   "communicator": {
     "type": "tcp",
     "host": "192.168.1.10",
-    "port": 8080
+    "port": 8888
   }
 }
 ```
 
+## 📘 GVirtuS Frontend–Backend Communication Failure while using docker containers
+
+However, in some cases, the direct solution above may not work — particularly when using two separate containers with misconfigured networking. To address this, I’ve outlined a more detailed approach for debugging frontend–backend communication issues.
+
 ---
 
-## 🎉 You're Done!
+### 🧩 Problem
 
-You have successfully:
+When running the **frontend container**, the following error occurred:
 
-* Linked your CUDA frontend app with GVirtuS fake libraries
-* Verified dynamic linking
-* Run the app with CUDA offloading to GVirtuS backend
+```bash
+ERROR - "Frontend.cpp":122: Exception occurred: TcpCommunicator: Can't connect to socket: Connection refused.
+```
 
-Well done! 🎯
+This indicates that the GVirtuS frontend cannot reach the backend process via the specified TCP socket.
+
+---
+
+## 🔍 Root Cause Analysis (RCA)
+
+### ❓ **What was expected:**
+
+The frontend container should connect to the GVirtuS backend at:
 
 ```
+tcp://192.168.0.124:8888
+```
+
+as configured in `etc/properties.json`.
+
+### ❗ **What actually happened:**
+
+* Frontend threw a connection error.
+* `nc -zv 192.168.0.124 8888` from the frontend returned:
+  `Connection refused`
+* `docker inspect` showed **no published port mapping**.
+* Backend was listening inside its container but **not exposed externally**.
+
+---
+
+## 🛠️ Solution Process
+
+### ✅ Step 1: Verify Backend Listening
+
+Inside the backend container:
+
+```bash
+ss -tuln | grep 8888
+```
+
+Output:
+
+```
+tcp LISTEN 0 5 0.0.0.0:8888 0.0.0.0:*
+```
+
+✅ This confirms the backend process is listening — but only **inside the container**.
+
+---
+
+### ✅ Step 2: Test From Frontend
+
+Inside frontend container:
+
+```bash
+nc -zv 192.168.0.124 8888
+```
+
+Result:
+
+```
+nc: connect to 192.168.0.124 port 8888 (tcp) failed: Connection refused
+```
+
+❌ Indicates port is **not accessible** externally.
+
+---
+
+### ✅ Step 3: Fix Port Accessibility
+
+#### ✅ Option Chosen: Use Host Networking
+
+We restarted the **backend container** using:
+
+```bash
+docker run --rm -it \
+  --gpus all \
+  --network host \          # 👈 This is the fix
+  --name gvirtus-backend \
+  gvirtus-backend-image
+```
+
+✅ This allows the container to **share the host network stack**, making it reachable at `192.168.0.124:8888`.
+
+> ℹ️ You could also use `-p 8888:8888` as an alternative fix.
+
+---
+
+### ✅ Step 4: Confirm It Works
+
+Back inside frontend container:
+
+```bash
+nc -zv 192.168.0.124 8888
+```
+
+✅ Output:
+
+```
+Connection to 192.168.0.124 8888 port [tcp/*] succeeded!
+```
+
+After applying this solution, I was able to successfully establish communication between the GVirtuS frontend application and the GVirtuS backend across two separate Docker containers over the network.

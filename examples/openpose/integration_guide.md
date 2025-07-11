@@ -135,7 +135,7 @@ nvcc 01_test.cu -o openpose_demo_gvirtus \
   -L/home/openpose/build/src/openpose -lopenpose \
   -L/home/openpose/build/caffe/lib -lcaffe \
   -L${GVIRTUS_HOME}/lib -L${GVIRTUS_HOME}/lib/frontend \
-  -lcuda -lcudart -lcublas -lcufft -lcudnn \
+  -lcuda -lcudart -lcublas -lcufft -lcudnn -lcurand \
   -lgflags -lglog \
   -Xcompiler -pthread \
   `pkg-config --cflags --libs opencv4`

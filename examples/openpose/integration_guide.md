@@ -192,11 +192,9 @@ Enable GPU in the wrapper config and let GVirtuS attempt CUDA virtualization:
 
 ---
 
+# GVirtuS - OpenPose CUDA Compatibility Summary (Full Library Coverage)
 
-
-# GVirtuS - OpenPose CUDA Compatibility Summary
-
-This document summarizes the analysis and verification of CUDA functions used by the OpenPose project compared against the GVirtuS frontend library implementation.
+This document summarizes the analysis and verification of CUDA functions used by the OpenPose project compared against the GVirtuS frontend library implementation, across all major CUDA libraries.
 
 ---
 
@@ -211,8 +209,8 @@ Evaluate which CUDA functions used by OpenPose (and its dependencies) are suppor
 1. **Extract Used CUDA Functions**
    - Commands:
      ```bash
-     nm -D /home/openpose/build/caffe/lib/libcaffe.so | c++filt | grep -E 'cuda|curand|cublas|cudnn'
-     nm -D /home/openpose/build/src/openpose/libopenpose.so | c++filt | grep -E 'cuda|curand|cublas|cudnn'
+     nm -D /home/openpose/build/caffe/lib/libcaffe.so | c++filt | grep -E 'cuda|curand|cublas|cudnn|cufft|cusolver|cusparse|nvrtc'
+     nm -D /home/openpose/build/src/openpose/libopenpose.so | c++filt | grep -E 'cuda|curand|cublas|cudnn|cufft|cusolver|cusparse|nvrtc'
      ```
 
 2. **Extract GVirtuS Implemented Functions**
@@ -222,7 +220,8 @@ Evaluate which CUDA functions used by OpenPose (and its dependencies) are suppor
      ```
 
 3. **Compare and Generate Checklist**
-   - Manual + script-based comparison to identify missing/available functions.
+   - Script-based comparison of all required vs. available symbols across:
+     `cuda`, `cudart`, `cublas`, `curand`, `cudnn`, `cufft`, `cusolver`, `cusparse`, `nvrtc`.
 
 ---
 
@@ -230,13 +229,13 @@ Evaluate which CUDA functions used by OpenPose (and its dependencies) are suppor
 
 | Function | Implemented | Tested | Working | Notes |
 |----------|-------------|--------|---------|------- |
-| __cudaPopCallConfiguration | ❌ | ❌ | ❓ |  
-| __cudaPushCallConfiguration | ❌ | ❌ | ❓ |  
-| __cudaRegisterFatBinary | ❌ | ❌ | ❓ |  
-| __cudaRegisterFatBinaryEnd | ❌ | ❌ | ❓ |  
-| __cudaRegisterFunction | ❌ | ❌ | ❓ |  
-| __cudaRegisterVar | ❌ | ❌ | ❓ |  
-| __cudaUnregisterFatBinary | ❌ | ❌ | ❓ |  
+| __cudaPopCallConfiguration | ✅ | ❌ | ❓ |  
+| __cudaPushCallConfiguration | ✅ | ❌ | ❓ |  
+| __cudaRegisterFatBinary | ✅ | ❌ | ❓ |  
+| __cudaRegisterFatBinaryEnd | ✅ | ❌ | ❓ |  
+| __cudaRegisterFunction | ✅ | ❌ | ❓ |  
+| __cudaRegisterVar | ✅ | ❌ | ❓ |  
+| __cudaUnregisterFatBinary | ✅ | ❌ | ❓ |  
 | cublasCreate_v2 | ✅ | ❌ | ❓ |  
 | cublasDasum_v2 | ✅ | ❌ | ❓ |  
 | cublasDaxpy_v2 | ✅ | ❌ | ❓ |  

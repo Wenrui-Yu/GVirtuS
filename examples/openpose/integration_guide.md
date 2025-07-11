@@ -229,13 +229,13 @@ Evaluate which CUDA functions used by OpenPose (and its dependencies) are suppor
 
 | Function | Implemented | Tested | Working | Notes |
 |----------|-------------|--------|---------|------- |
-| __cudaPopCallConfiguration | ✅ | ❌ | ❓ |  
-| __cudaPushCallConfiguration | ✅ | ❌ | ❓ |  
-| __cudaRegisterFatBinary | ✅ | ❌ | ❓ |  
-| __cudaRegisterFatBinaryEnd | ✅ | ❌ | ❓ |  
-| __cudaRegisterFunction | ✅ | ❌ | ❓ |  
-| __cudaRegisterVar | ✅ | ❌ | ❓ |  
-| __cudaUnregisterFatBinary | ✅ | ❌ | ❓ |  
+| __cudaPopCallConfiguration | ❌ | ❌ | ❓ |  
+| __cudaPushCallConfiguration | ❌ | ❌ | ❓ |  
+| __cudaRegisterFatBinary | ❌ | ❌ | ❓ |  
+| __cudaRegisterFatBinaryEnd | ❌ | ❌ | ❓ |  
+| __cudaRegisterFunction | ❌ | ❌ | ❓ |  
+| __cudaRegisterVar | ❌ | ❌ | ❓ |  
+| __cudaUnregisterFatBinary | ❌ | ❌ | ❓ |  
 | cublasCreate_v2 | ✅ | ❌ | ❓ |  
 | cublasDasum_v2 | ✅ | ❌ | ❓ |  
 | cublasDaxpy_v2 | ✅ | ❌ | ❓ |  

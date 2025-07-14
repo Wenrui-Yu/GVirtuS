@@ -229,13 +229,13 @@ Evaluate which CUDA functions used by OpenPose (and its dependencies) are suppor
 
 | Function | Implemented | Tested | Unit test results | Notes |
 |----------|-------------|--------|---------|------- |
-| __cudaPopCallConfiguration | ❌ | ❌ | ❓ |  Not implemented @GVirtuS
-| __cudaPushCallConfiguration | ❌ | ❌ | ❓ |  Not implemented @GVirtuS
-| __cudaRegisterFatBinary | ❌ | ❌ | ❓ |  Not implemented @GVirtuS
-| __cudaRegisterFatBinaryEnd | ❌ | ❌ | ❓ |  Not implemented @GVirtuS
-| __cudaRegisterFunction | ❌ | ❌ | ❓ |  Not implemented @GVirtuS
-| __cudaRegisterVar | ❌ | ❌ | ❓ |  Not implemented @GVirtuS
-| __cudaUnregisterFatBinary | ❌ | ❌ | ❓ |  Not implemented @GVirtuS
+| __cudaPopCallConfiguration | ❌ | ❌ | ❓ |  Not implemented in GVirtuS
+| __cudaPushCallConfiguration | ❌ | ❌ | ❓ |  Not implemented in GVirtuS
+| __cudaRegisterFatBinary | ❌ | ❌ | ❓ |  Not implemented in VirtuS
+| __cudaRegisterFatBinaryEnd | ❌ | ❌ | ❓ |  Not implemented in GVirtuS
+| __cudaRegisterFunction | ❌ | ❌ | ❓ |  Not implemented in GVirtuS
+| __cudaRegisterVar | ❌ | ❌ | ❓ |  Not implemented in GVirtuS
+| __cudaUnregisterFatBinary | ❌ | ❌ | ❓ |  Not implemented in GVirtuS
 | cublasCreate_v2 | ✅ | ✅ | ✅ |  
 | cublasDasum_v2 | ✅ | ✅ | ❌ |  unit test failed
 | cublasDaxpy_v2 | ✅ | ✅ | ✅ |  
@@ -323,5 +323,5 @@ Evaluate which CUDA functions used by OpenPose (and its dependencies) are suppor
 | curandGenerateNormalDouble | ✅ | ✅ | ✅ |  
 | curandGenerateUniform | ✅ | ✅ | ✅ |  
 | curandGenerateUniformDouble | ✅ | ✅ | ✅ |  
-| curandSetGeneratorOffset | ❌ | ❌ | ❓ |  Not implemented @GVirtuS
+| curandSetGeneratorOffset | ❌ | ❌ | ❓ |  Not implemented in GVirtuS
 | curandSetPseudoRandomGeneratorSeed | ✅ | ✅ | ✅ |  

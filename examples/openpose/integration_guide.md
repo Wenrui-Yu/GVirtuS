@@ -322,6 +322,6 @@ Evaluate which CUDA functions used by OpenPose (and its dependencies) are suppor
 | curandGenerateNormal | ✅ | ✅ | ✅ |  
 | curandGenerateNormalDouble | ✅ | ✅ | ✅ |  
 | curandGenerateUniform | ✅ | ✅ | ✅ |  
-| curandGenerateUniformDouble | ✅ | ❌ | ❓ |  
+| curandGenerateUniformDouble | ✅ | ✅ | ✅ |  
 | curandSetGeneratorOffset | ❌ | ❌ | ❓ |  
 | curandSetPseudoRandomGeneratorSeed | ✅ | ✅ | ✅ |  

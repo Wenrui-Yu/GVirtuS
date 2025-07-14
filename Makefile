@@ -22,6 +22,7 @@ run-gvirtus-backend-dev:
 	docker run \
 		--rm \
 		-it \
+		--network host \
 		-v ./cmake:/gvirtus/cmake/ \
 		-v ./etc:/gvirtus/etc/ \
 		-v ./include:/gvirtus/include/ \

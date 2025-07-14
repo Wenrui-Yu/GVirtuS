@@ -7,7 +7,7 @@ This guide details how to run OpenPose inside a Docker container with GVirtuS su
 ## 🚀 Docker Run Command
 
 ```bash
-docker run -it --name openpose_gvirtus_env \
+docker run -it --name openpose-dev1 \
   --network=host \
   --privileged \
   --gpus all \
@@ -27,7 +27,8 @@ xhost +local:root
 ### 🔓 Access Running Docker Container
 
 ```bash
-docker exec -it openpose_gvirtus_env bash
+docker start openpose-dev1 
+docker exec -it openpose-dev1 bash
 ```
 
 ---
@@ -52,7 +53,7 @@ export MIT_SHM_DISABLE=1
 1. **Navigate to script directory**:
 
 ```bash
-cd openpose/examples/gvirtus_api
+cd openpose/examples/gvirtus
 ```
 
 2. **Compile the script**:
@@ -71,7 +72,7 @@ g++ 00_test.cpp -o try \
 
 ```bash
 cd /home/openpose
-./examples/gvirtus_api/try
+./examples/gvirtus/try
 ```
 
 ---

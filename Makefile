@@ -43,7 +43,7 @@ run-gvirtus-tests:
 		-it gvirtus \
 		bash -c \
 		'export LD_LIBRARY_PATH=$$GVIRTUS_HOME/lib/frontend:$$LD_LIBRARY_PATH && \
-		 cd /gvirtus/build/tests && ./test_cudart'                  
+		 cd /gvirtus/build/tests && ./test_cublas'                  
 
 stop-gvirtus:
 	docker stop gvirtus

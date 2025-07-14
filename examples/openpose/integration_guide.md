@@ -227,7 +227,7 @@ Evaluate which CUDA functions used by OpenPose (and its dependencies) are suppor
 
 ## ✅ CUDA Function Coverage Checklist
 
-| Function | Implemented | Tested | Working | Notes |
+| Function | Implemented | Tested | Unit test results | Notes |
 |----------|-------------|--------|---------|------- |
 | __cudaPopCallConfiguration | ❌ | ❌ | ❓ |  
 | __cudaPushCallConfiguration | ❌ | ❌ | ❓ |  
@@ -236,24 +236,24 @@ Evaluate which CUDA functions used by OpenPose (and its dependencies) are suppor
 | __cudaRegisterFunction | ❌ | ❌ | ❓ |  
 | __cudaRegisterVar | ❌ | ❌ | ❓ |  
 | __cudaUnregisterFatBinary | ❌ | ❌ | ❓ |  
-| cublasCreate_v2 | ✅ | ❌ | ❓ |  
-| cublasDasum_v2 | ✅ | ❌ | ❓ |  
-| cublasDaxpy_v2 | ✅ | ❌ | ❓ |  
-| cublasDcopy_v2 | ✅ | ❌ | ❓ |  
-| cublasDdot_v2 | ✅ | ❌ | ❓ |  
-| cublasDestroy_v2 | ✅ | ❌ | ❓ |  
-| cublasDgemm_v2 | ✅ | ❌ | ❓ |  
-| cublasDgemv_v2 | ✅ | ❌ | ❓ |  
-| cublasDscal_v2 | ✅ | ❌ | ❓ |  
-| cublasGetStream_v2 | ✅ | ❌ | ❓ |  
-| cublasSasum_v2 | ✅ | ❌ | ❓ |  
-| cublasSaxpy_v2 | ✅ | ❌ | ❓ |  
-| cublasScopy_v2 | ✅ | ❌ | ❓ |  
-| cublasSdot_v2 | ✅ | ❌ | ❓ |  
-| cublasSetStream_v2 | ✅ | ❌ | ❓ |  
-| cublasSgemm_v2 | ✅ | ❌ | ❓ |  
-| cublasSgemv_v2 | ✅ | ❌ | ❓ |  
-| cublasSscal_v2 | ✅ | ❌ | ❓ |  
+| cublasCreate_v2 | ✅ | ✅ | ✅ |  
+| cublasDasum_v2 | ✅ | ✅ | ❌ |  
+| cublasDaxpy_v2 | ✅ | ✅ | ✅ |  
+| cublasDcopy_v2 | ✅ | ✅ | ✅ |  
+| cublasDdot_v2 | ✅ | ✅ | ✅ |  
+| cublasDestroy_v2 | ✅ | ✅ | ✅ |  
+| cublasDgemm_v2 | ✅ | ✅ | ✅ |  
+| cublasDgemv_v2 | ✅ | ✅ | ✅ |  
+| cublasDscal_v2 | ✅ | ✅ | ✅ |  
+| cublasGetStream_v2 | ✅ | ✅ | ❌ |  
+| cublasSasum_v2 | ✅ | ✅ | ✅ |  
+| cublasSaxpy_v2 | ✅ | ✅ | ✅ |  
+| cublasScopy_v2 | ✅ | ✅ | ✅ |  
+| cublasSdot_v2 | ✅ | ✅ | ✅ |  
+| cublasSetStream_v2 | ✅ | ✅ | ✅ |  
+| cublasSgemm_v2 | ✅ | ✅ | ✅ |  
+| cublasSgemv_v2 | ✅ | ✅ | ✅ |  
+| cublasSscal_v2 | ✅ | ✅ | ✅ |  
 | cudaEventCreate | ✅ | ❌ | ❓ |  
 | cudaEventDestroy | ✅ | ❌ | ❓ |  
 | cudaEventElapsedTime | ✅ | ❌ | ❓ |  

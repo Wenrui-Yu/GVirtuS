@@ -17,7 +17,8 @@ endif()
 set(TEST_SOURCES
     #test_cudart.cu
     #test_cublas.cu
-    test_curand.cu
+    #test_curand.cu
+    test_cudnn.cu
 )
 
 # Create an output directory for tests

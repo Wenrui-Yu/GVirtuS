@@ -112,3 +112,47 @@ TEST(cuRAND, SetPseudoRandomGeneratorSeed) {
     CURAND_CHECK(curandSetPseudoRandomGeneratorSeed(gen, 1234ULL));
     CURAND_CHECK(curandDestroyGenerator(gen));
 }
+
+
+//curandSetGeneratorOffset
+TEST(cuRAND, SetGeneratorOffset) {
+    curandGenerator_t gen1, gen2;
+
+    // Create 2 identical generators
+    CURAND_CHECK(curandCreateGenerator(&gen1, CURAND_RNG_PSEUDO_DEFAULT));
+    CURAND_CHECK(curandCreateGenerator(&gen2, CURAND_RNG_PSEUDO_DEFAULT));
+
+    // Set same seed
+    CURAND_CHECK(curandSetPseudoRandomGeneratorSeed(gen1, 1234ULL));
+    CURAND_CHECK(curandSetPseudoRandomGeneratorSeed(gen2, 1234ULL));
+
+    // Set different offsets
+    size_t offset = 1000;
+    CURAND_CHECK(curandSetGeneratorOffset(gen1, offset));
+
+    // Generate same count from both, but gen2 will generate offset + count
+    const int count = 10;
+    std::vector<float> out1(count), out2(offset + count);
+
+    float *d_out1, *d_out2;
+    cudaMalloc(&d_out1, count * sizeof(float));
+    cudaMalloc(&d_out2, (offset + count) * sizeof(float));
+
+    // Generate for both
+    CURAND_CHECK(curandGenerateUniform(gen1, d_out1, count));
+    CURAND_CHECK(curandGenerateUniform(gen2, d_out2, offset + count));
+
+    // Copy and compare
+    cudaMemcpy(out1.data(), d_out1, count * sizeof(float), cudaMemcpyDeviceToHost);
+    cudaMemcpy(out2.data(), d_out2, (offset + count) * sizeof(float), cudaMemcpyDeviceToHost);
+
+    // The output of gen1 should match gen2's values starting at [offset]
+    for (int i = 0; i < count; ++i) {
+        EXPECT_FLOAT_EQ(out1[i], out2[i + offset]);
+    }
+
+    CURAND_CHECK(curandDestroyGenerator(gen1));
+    CURAND_CHECK(curandDestroyGenerator(gen2));
+    cudaFree(d_out1);
+    cudaFree(d_out2);
+}

@@ -272,3 +272,17 @@ CURAND_ROUTINE_HANDLER(DestroyGenerator) {
 
     return std::make_shared<Result>(cs);
 }
+
+CURAND_ROUTINE_HANDLER(SetGeneratorOffset) {
+    Logger logger = Logger::getInstance(LOG4CPLUS_TEXT("SetGeneratorOffset"));
+
+    // Read inputs
+    curandGenerator_t generator = in->Get<curandGenerator_t>();
+    size_t offset = in->Get<size_t>();
+
+    // Call native CURAND function
+    curandStatus_t cs = curandSetGeneratorOffset(generator, offset);
+
+    // Return result
+    return std::make_shared<Result>(cs);
+}

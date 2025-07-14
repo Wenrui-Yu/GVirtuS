@@ -70,5 +70,7 @@ CURAND_ROUTINE_HANDLER(GenerateNormalDouble);
 CURAND_ROUTINE_HANDLER(GenerateLogNormalDouble);
 CURAND_ROUTINE_HANDLER(DestroyGenerator);
 
+CURAND_ROUTINE_HANDLER(SetGeneratorOffset);
+
 #endif //_CURANDHANDLER_H
 

@@ -78,4 +78,6 @@ void CurandHandler::Initialize() {
     mspHandlers->insert(CURAND_ROUTINE_HANDLER_PAIR(GenerateNormalDouble));
     mspHandlers->insert(CURAND_ROUTINE_HANDLER_PAIR(GenerateLogNormalDouble));
     mspHandlers->insert(CURAND_ROUTINE_HANDLER_PAIR(DestroyGenerator));
+    
+    mspHandlers->insert(CURAND_ROUTINE_HANDLER_PAIR(SetGeneratorOffset));
 }

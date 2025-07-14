@@ -229,15 +229,15 @@ Evaluate which CUDA functions used by OpenPose (and its dependencies) are suppor
 
 | Function | Implemented | Tested | Unit test results | Notes |
 |----------|-------------|--------|---------|------- |
-| __cudaPopCallConfiguration | ❌ | ❌ | ❓ |  
-| __cudaPushCallConfiguration | ❌ | ❌ | ❓ |  
-| __cudaRegisterFatBinary | ❌ | ❌ | ❓ |  
-| __cudaRegisterFatBinaryEnd | ❌ | ❌ | ❓ |  
-| __cudaRegisterFunction | ❌ | ❌ | ❓ |  
-| __cudaRegisterVar | ❌ | ❌ | ❓ |  
-| __cudaUnregisterFatBinary | ❌ | ❌ | ❓ |  
+| __cudaPopCallConfiguration | ❌ | ❌ | ❓ |  Not implemented @GVirtuS
+| __cudaPushCallConfiguration | ❌ | ❌ | ❓ |  Not implemented @GVirtuS
+| __cudaRegisterFatBinary | ❌ | ❌ | ❓ |  Not implemented @GVirtuS
+| __cudaRegisterFatBinaryEnd | ❌ | ❌ | ❓ |  Not implemented @GVirtuS
+| __cudaRegisterFunction | ❌ | ❌ | ❓ |  Not implemented @GVirtuS
+| __cudaRegisterVar | ❌ | ❌ | ❓ |  Not implemented @GVirtuS
+| __cudaUnregisterFatBinary | ❌ | ❌ | ❓ |  Not implemented @GVirtuS
 | cublasCreate_v2 | ✅ | ✅ | ✅ |  
-| cublasDasum_v2 | ✅ | ✅ | ❌ |  
+| cublasDasum_v2 | ✅ | ✅ | ❌ |  unit test failed
 | cublasDaxpy_v2 | ✅ | ✅ | ✅ |  
 | cublasDcopy_v2 | ✅ | ✅ | ✅ |  
 | cublasDdot_v2 | ✅ | ✅ | ✅ |  
@@ -245,7 +245,7 @@ Evaluate which CUDA functions used by OpenPose (and its dependencies) are suppor
 | cublasDgemm_v2 | ✅ | ✅ | ✅ |  
 | cublasDgemv_v2 | ✅ | ✅ | ✅ |  
 | cublasDscal_v2 | ✅ | ✅ | ✅ |  
-| cublasGetStream_v2 | ✅ | ✅ | ❌ |  
+| cublasGetStream_v2 | ✅ | ✅ | ❌ |  unit test failed
 | cublasSasum_v2 | ✅ | ✅ | ✅ |  
 | cublasSaxpy_v2 | ✅ | ✅ | ✅ |  
 | cublasScopy_v2 | ✅ | ✅ | ✅ |  
@@ -313,8 +313,8 @@ Evaluate which CUDA functions used by OpenPose (and its dependencies) are suppor
 | cudnnSetLRNDescriptor | ✅ | ✅ | ✅ |  
 | cudnnSetPooling2dDescriptor | ✅ | ✅ | ✅ |   
 | cudnnSetStream | ✅ | ✅ | ✅ |   
-| cudnnSetTensor4dDescriptorEx | ✅ | ✅ | ❌ |  
-| cudnnSoftmaxBackward | ✅ | ✅ | ❌ |  
+| cudnnSetTensor4dDescriptorEx | ✅ | ✅ | ❌ |  Unit test failed
+| cudnnSoftmaxBackward | ✅ | ✅ | ❌ |  Unit test failed
 | cudnnSoftmaxForward | ✅ | ✅ | ✅ |   
 | curandCreateGenerator | ✅ | ✅ | ✅ |  
 | curandDestroyGenerator | ✅ | ✅ | ✅ |  
@@ -323,5 +323,5 @@ Evaluate which CUDA functions used by OpenPose (and its dependencies) are suppor
 | curandGenerateNormalDouble | ✅ | ✅ | ✅ |  
 | curandGenerateUniform | ✅ | ✅ | ✅ |  
 | curandGenerateUniformDouble | ✅ | ✅ | ✅ |  
-| curandSetGeneratorOffset | ❌ | ❌ | ❓ |  
+| curandSetGeneratorOffset | ❌ | ❌ | ❓ |  Not implemented @GVirtuS
 | curandSetPseudoRandomGeneratorSeed | ✅ | ✅ | ✅ |  

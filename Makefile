@@ -1,4 +1,4 @@
-.PHONY: docker-build-push-dev docker-build-push-prod run-gvirtus-backend-dev run-gvirtus-tests stop-gvirtus
+.PHONY: docker-build-push-dev docker-build-push-prod run-gvirtus-backend-dev run-gvirtus-tests stop-gvirtus docker-build-push-openpose run-openpose-frontend
 
 docker-build-push-dev:
 	docker buildx build \
@@ -48,3 +48,28 @@ run-gvirtus-tests:
 
 stop-gvirtus:
 	docker stop gvirtus
+
+
+docker-build-push-openpose:
+	docker buildx build \
+		--platform linux/amd64 \
+		--push \
+		--no-cache \
+		-f docker/openpose/Dockerfile \
+		-t darsh916/openpose_gvirtus:cuda12.6 \
+		docker/openpose
+
+run-openpose-frontend:
+	xhost +local:root
+	docker run \
+		--rm \
+		-it \
+		--gpus all \
+		--network host \
+		--env DISPLAY=$$DISPLAY \
+		--env XAUTHORITY=/root/.Xauthority \
+		-v /tmp/.X11-unix:/tmp/.X11-unix \
+		-v $$HOME/.Xauthority:/root/.Xauthority \
+		-v ./examples/openpose-gvirtus:/home/openpose/examples/openpose-gvirtus \
+		--name openpose-frontend \
+		darsh916/openpose_gvirtus:cuda12.6

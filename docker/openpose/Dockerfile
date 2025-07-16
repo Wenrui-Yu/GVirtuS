@@ -55,7 +55,7 @@ WORKDIR /home/openpose
 COPY cmake/Cuda.cmake /home/openpose/cmake/Cuda.cmake
 
 # ✅ Copy models directory into OpenPose models folder
-COPY models/ /home/openpose/models/
+#COPY models/ /home/openpose/models/
 
 # ✅ Then patch Cuda.cmake AFTER cloning OpenPose (and its 3rdparty/caffe)
 COPY caffe/ /home/openpose/3rdparty/caffe/

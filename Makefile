@@ -23,6 +23,7 @@ run-gvirtus-backend-dev:
 		--rm \
 		-it \
 		--network host \
+		--gpus all \
 		-v ./cmake:/gvirtus/cmake/ \
 		-v ./etc:/gvirtus/etc/ \
 		-v ./include:/gvirtus/include/ \

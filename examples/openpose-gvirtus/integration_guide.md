@@ -326,3 +326,116 @@ Evaluate which CUDA functions used by OpenPose (and its dependencies) are suppor
 | curandGenerateUniformDouble | ✅ | ✅ | ✅ |  
 | curandSetGeneratorOffset | ✅ | ✅ | ✅ |  Newly implemented in GVirtuS
 | curandSetPseudoRandomGeneratorSeed | ✅ | ✅ | ✅ |  
+
+--------------------
+Error 1:
+./run_openpose.sh 
+INFO - GVirtuS frontend version /home/darshan/GVirtuS/etc/properties.json
+Starting OpenPose with CUDA (.cu file)...
+
+Error:
+Cuda check failed (100 vs. 0): no CUDA-capable device is detected
+
+Coming from:
+- /home/darshan/openpose/src/openpose/gpu/cuda.cpp:getCudaGpuNumber():48
+
+Root Cause:
+fails with error code 100, which corresponds to:
+
+    cudaErrorNoDevice = 100: No CUDA-capable device is detected.
+
+  ---------
+Error 2:
+  ./openpose_demo_gvirtus 
+INFO - GVirtuS frontend version /home/darshan/GVirtuS/etc/properties.json
+Starting OpenPose with CUDA (.cu file)...
+
+Error:
+Cuda check failed (36 vs. 0): API call is not supported in the installed CUDA driver
+
+Root cause:
+The actual error returned by cudaGetDeviceCount() is code 36, which is:
+
+    cudaErrorNotSupported = 36: API call is not supported on the installed CUDA driver
+It means the code reached the GPU backend, tried to run a CUDA API call, and the driver explicitly rejected the API — because it's unsupported, disabled, or unavailable in that context.
+
+Lets figure out this error coming with openpose or normal cuda_application integration with GVirtuS
+cudaGetDeviceCount() in OpenPose	❌ Fails with error 36
+cudaGetDeviceCount() in minimal CUDA test	❌ Fails with error 36
+Other CUDA functions (like cudaMalloc, cudaMemcpy)	✅ Work under GVirtuS
+GVirtuS backend handler for cudaGetDeviceCount()	✅ Exists, but uses cudaGetDeviceCount() internally
+Driver APIs (cuDeviceGetCount)	✅ Present and usable
+
+🎯 Root Cause
+
+GVirtuS backend is using cudaGetDeviceCount() internally (i.e. calling itself).
+That leads to:
+
+    ❌ A recursive call chain or unresolved runtime context → returns cudaErrorNotSupported (36)
+
+Solution: Modified cudaGetDeviceCount() function
+-----
+
+## 🛠 Resolving `Frontend.cpp:128` JSON Error in GVirtuS-OpenPose
+
+### ❗ Problem
+
+When running OpenPose with GVirtuS integration, the following error was encountered:
+
+```
+ERROR - "Frontend.cpp":128: Exception occurred: [json.exception.type_error.304] cannot use at() with null
+```
+
+This occurred when the OpenPose frontend attempted to load and parse `properties.json` during initialization.
+
+---
+
+### 🧠 Root Cause
+
+The error was traced to this line inside `EndpointFactory::get_endpoint()`:
+
+```cpp
+if ("tcp/ip" == j["communicator"][ind_endpoint]["endpoint"].at("suite"))
+```
+
+This line uses `.at("suite")`, which **throws an exception if the key is missing or the value is `null`**.
+
+Additionally, `ind_endpoint` was a static index variable that incremented with each call — causing an **out-of-bounds access** on subsequent `get_endpoint()` calls.
+
+---
+
+### ✅ Solution
+
+We resolved this by **safely refactoring** the `EndpointFactory` logic:
+
+#### ✔ Defensive JSON access
+
+* Replaced `.at()` with safe checks using `.contains()` and `.get<std::string>()`
+* Added validation for JSON structure (presence of `communicator`, `endpoint`, and `suite`)
+
+#### ✔ Removed `ind_endpoint` logic
+
+* Static index was removed, as only a single endpoint is used throughout the application's lifecycle
+* A static `index()` method returning `0` was retained for compatibility with other modules
+
+#### ✔ Integrated logging
+
+* Replaced `std::cout` with `log4cplus` logging to remain consistent with GVirtuS logging practices
+
+---
+
+### 🔧 Final Highlights (in `EndpointFactory.h`)
+
+* Uses only the first entry from `"communicator"` array (`index 0`)
+* Validates and logs the JSON content
+* Prevents crashes from malformed configs or index misuse
+
+---
+
+### 📌 Result
+
+* The original `json.exception.type_error.304` crash is completely resolved
+* GVirtuS frontend works reliably across repeated CUDA calls
+* Logging and compatibility with existing GVirtuS modules is preserved
+
+---

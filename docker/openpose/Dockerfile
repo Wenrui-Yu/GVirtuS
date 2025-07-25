@@ -74,7 +74,7 @@ RUN git clone -b gvirtus-cuda-12-ref https://github.com/ecn-aau/GVirtuS.git
 
 WORKDIR /home/GVirtuS
 RUN mkdir build && cd build && \
-    cmake .. && \
+    cmake -DCMAKE_PREFIX_PATH=/home/GVirtuS .. && \
     make -j$(nproc) && \
     make install
 

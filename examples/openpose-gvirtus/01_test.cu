@@ -8,7 +8,7 @@
 #include <iostream>
 
 // Custom flags
-DEFINE_string(image_path, "examples/media/COCO_val2014_000000000192.jpg",
+DEFINE_string(image_path, "COCO_val2014_000000000474.jpg",
               "Process an image. Read all standard formats (jpg, png, bmp, etc.).");
 
 DEFINE_bool(no_display, false,

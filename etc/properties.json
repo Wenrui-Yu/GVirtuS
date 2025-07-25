@@ -4,8 +4,8 @@
       "endpoint": {
         "suite": "tcp/ip",
         "protocol": "tcp",
-        "server_address": "127.0.0.1",
-        "port": "8888"
+        "server_address": "192.168.1.36",
+        "port": "9999"
       },
       "plugins": [
         "cuda",

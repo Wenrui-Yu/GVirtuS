@@ -55,14 +55,33 @@ extern "C" __host__ __device__ cudaError_t CUDARTAPI cudaGetDevice(int *device) 
     return CudaRtFrontend::GetExitCode();
 }
 
+// extern "C" __host__ cudaError_t CUDARTAPI cudaGetDeviceCount(int *count) {
+//     CudaRtFrontend::Prepare();
+//     CudaRtFrontend::AddHostPointerForArguments(count);
+//     CudaRtFrontend::Execute("cudaGetDeviceCount");
+//     if (CudaRtFrontend::Success())
+//         *count = *(CudaRtFrontend::GetOutputHostPointer<int>());
+//     return CudaRtFrontend::GetExitCode();
+// }
+
+
 extern "C" __host__ cudaError_t CUDARTAPI cudaGetDeviceCount(int *count) {
+    printf("[GVirtuS-FRONTEND] cudaGetDeviceCount() CALLED\n");
+
     CudaRtFrontend::Prepare();
     CudaRtFrontend::AddHostPointerForArguments(count);
     CudaRtFrontend::Execute("cudaGetDeviceCount");
-    if (CudaRtFrontend::Success())
+
+    if (CudaRtFrontend::Success()) {
         *count = *(CudaRtFrontend::GetOutputHostPointer<int>());
+        printf("[GVirtuS-FRONTEND] Successfully got count = %d\n", *count);
+    } else {
+        printf("[GVirtuS-FRONTEND] FAILED: %s\n", cudaGetErrorString(CudaRtFrontend::GetExitCode()));
+    }
+
     return CudaRtFrontend::GetExitCode();
 }
+
 
 extern "C" __host__ cudaError_t CUDARTAPI
 cudaGetDeviceProperties(cudaDeviceProp *prop, int device) {

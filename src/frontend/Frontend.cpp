@@ -115,7 +115,12 @@ void Frontend::Init(Communicator *c) {
     try {
         auto endpoint = EndpointFactory::get_endpoint(config_path);
 
+        std::cout << "Endpoint details: suite=" << endpoint->suite()
+          << ", protocol=" << endpoint->protocol()
+          << ", to_string=" << endpoint->to_string() << std::endl;
+
         mpFrontends->find(tid)->second->_communicator = CommunicatorFactory::get_communicator(endpoint);
+
         mpFrontends->find(tid)->second->_communicator->obj_ptr()->Connect();
     }
     catch (const std::exception& e) {

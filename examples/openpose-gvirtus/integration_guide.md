@@ -314,7 +314,7 @@ Evaluate which CUDA functions used by OpenPose (and its dependencies) are suppor
 | cudnnSetLRNDescriptor | ✅ | ✅ | ✅ |  
 | cudnnSetPooling2dDescriptor | ✅ | ✅ | ✅ |   
 | cudnnSetStream | ✅ | ✅ | ✅ |   
-| cudnnSetTensor4dDescriptorEx | ✅ | ✅ | ❌ |  Unit test failed
+| cudnnSetTensor4dDescriptorEx | ✅ | ✅ | ✅ |  Solved
 | cudnnSoftmaxBackward | ✅ | ✅ | ❌ |  Unit test failed
 | cudnnSoftmaxForward | ✅ | ✅ | ✅ |   
 | curandCreateGenerator | ✅ | ✅ | ✅ |  
@@ -439,3 +439,55 @@ We resolved this by **safely refactoring** the `EndpointFactory` logic:
 * Logging and compatibility with existing GVirtuS modules is preserved
 
 ---
+
+#### Error> E0728 12:40:53.495074 53596 common.cpp:114] Cannot create Cublas handle. Cublas won't be available. E0728 12:40:53.495978 53596 common.cpp:121] Cannot create Curand generator. Curand won't be available.
+
+This is error due to the backend was not linking well with GVirtuS Home directory.
+On the terminal where you're running backend.sh file try the below commands,
+
+echo $GVIRTUS_HOME
+This suppose to print '/home/darshan/GVirtuS' if it printed none then export to GVirtuS Home properly.
+export GVIRTUS_HOME=/home/darshan/GVirtuS
+After execute the backend,
+LD_LIBRARY_PATH="${GVIRTUS_HOME}/lib:${LD_LIBRARY_PATH}" \
+${GVIRTUS_HOME}/bin/gvirtus-backend ${GVIRTUS_HOME}/etc/properties.json
+
+---
+
+### Modified commands to compile openpose with using GVirtuS environment.
+     ```bash
+cmake .. \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DBUILD_CAFFE=ON \
+  -DBUILD_EXAMPLES=ON \
+  -DBUILD_DOCS=OFF \
+  -DCUDA_USE_STATIC_CUDA_RUNTIME=OFF \
+  -DCUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda-12.6 \
+  -DCUDA_NVCC_EXECUTABLE=/usr/local/cuda-12.6/bin/nvcc \
+  -DCUDA_CUDART_LIBRARY=/home/darshan/GVirtuS/lib/frontend/libcudart.so \
+  -DCUDA_LIBRARY=/home/darshan/GVirtuS/lib/frontend/libcuda.so \
+  -DCUDA_rt_LIBRARY=/usr/lib/x86_64-linux-gnu/librt.so \
+  -DCUDA_INCLUDE_DIRS="/home/darshan/GVirtuS/include;/usr/local/cuda-12.6/include" \
+  -DCMAKE_CXX_FLAGS="-L/home/darshan/GVirtuS/lib -L/home/darshan/GVirtuS/lib/frontend -lgvirtus-common -lgvirtus-frontend -lgvirtus-communicators -lgvirtus-plugin-cuda -lgvirtus-plugin-cudart -lgvirtus-plugin-cublas -lgvirtus-plugin-cudnn -lgvirtus-plugin-curand -lgvirtus-plugin-cufft -lgvirtus-plugin-cusolver -lgvirtus-plugin-cusparse -lgvirtus-plugin-nvrtc -lcudart -lcuda -lcublas -lcudnn -lcurand -lcufft -lcusolver -lcusparse -lnvrtc"
+   ```
+### Build command for openpoes-gvirtus integration script
+    ```bash
+nvcc 01_test.cu -o openpose_demo_gvirtus \
+  -std=c++14 \
+  -I/home/darshan/openpose/include \
+  -I/usr/include/opencv4 \
+  -I/home/darshan/openpose/3rdparty/caffe/include \
+  -I/home/darshan/openpose/3rdparty/caffe/build/include \
+  -L/home/darshan/openpose/build/src/openpose -lopenpose \
+  -L/home/darshan/openpose/build/caffe/lib -lcaffe \
+  -L${GVIRTUS_HOME}/lib \
+  -L${GVIRTUS_HOME}/lib/frontend \
+  -lgvirtus-frontend -lgvirtus-communicators -lgvirtus-common \
+  -lcuda -lcudart -lcublas -lcufft -lcudnn -lcurand \
+  -lgflags -lglog \
+  -Xcompiler -pthread \
+  $(pkg-config --cflags --libs opencv4)
+```bash
+
+---
+

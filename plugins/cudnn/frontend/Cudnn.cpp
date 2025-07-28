@@ -97,37 +97,40 @@ extern "C" cudnnStatus_t CUDNNWINAPI cudnnSetTensor4dDescriptor( cudnnTensorDesc
     return CudnnFrontend::GetExitCode();
 }
 
-extern "C" cudnnStatus_t CUDNNWINAPI cudnnSetTensor4dDescriptorEx( cudnnTensorDescriptor_t tensorDesc,
-                              cudnnDataType_t dataType,
-                              int n,
-                              int c,
-                              int h,
-                              int w,
-                              int nStride,
-                              int cStride,
-                              int hStride,
-                              int wStride ) {
-    CudnnFrontend::Prepare();
+extern "C" cudnnStatus_t CUDNNWINAPI cudnnSetTensor4dDescriptorEx(
+    cudnnTensorDescriptor_t tensorDesc,
+    cudnnDataType_t dataType,
+    int n,
+    int c,
+    int h,
+    int w,
+    int nStride,
+    int cStride,
+    int hStride,
+    int wStride) {
 
-    CudnnFrontend::AddDevicePointerForArguments(tensorDesc);
+    CudnnFrontend::Prepare();
+    CudnnFrontend::AddDevicePointerForArguments(tensorDesc);  // Must be allocated and tracked
     CudnnFrontend::AddVariableForArguments<cudnnDataType_t>(dataType);
     CudnnFrontend::AddVariableForArguments<int>(n);
     CudnnFrontend::AddVariableForArguments<int>(c);
     CudnnFrontend::AddVariableForArguments<int>(h);
     CudnnFrontend::AddVariableForArguments<int>(w);
-
     CudnnFrontend::AddVariableForArguments<int>(nStride);
     CudnnFrontend::AddVariableForArguments<int>(cStride);
     CudnnFrontend::AddVariableForArguments<int>(hStride);
     CudnnFrontend::AddVariableForArguments<int>(wStride);
 
-    CudnnFrontend::Execute("SetTensor4dDescriptorEx");
+    CudnnFrontend::Execute("cudnnSetTensor4dDescriptorEx");    //Fixed - Renamed from SetTensor4dDescriptorEx to cudnnSetTensor4dDescriptorEx
+
     if (CudnnFrontend::Success()) {
-        tensorDesc = CudnnFrontend::GetOutputVariable<cudnnTensorDescriptor_t>();
+        // DO NOT overwrite the pointer!
         registerDescriptorType(tensorDesc, dataType);
     }
+
     return CudnnFrontend::GetExitCode();
 }
+
 
 extern "C"  cudnnStatus_t CUDNNWINAPI cudnnGetTensor4dDescriptor( const cudnnTensorDescriptor_t tensorDesc,
                             cudnnDataType_t *dataType,

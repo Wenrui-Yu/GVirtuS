@@ -1,0 +1,65 @@
+*.o
+*.a
+*.la
+*.so
+*.lo
+*.Plo
+*.Tpo
+*.Po
+*.cache
+.deps/
+.libs
+config.h.in*
+
+# Clion
+cmake-build-debug/
+.idea/
+
+# VSCode
+.vscode/
+.clang-format
+
+# CMake
+cmake_install.cmake
+CMakeCache.txt
+install_manifest.txt
+CMakeFiles/
+*.cbp
+.graphviz/
+.puml/
+*.pdf
+*.png
+*.puml
+
+# Diagrams not exported
+*.dia*
+*.xcf
+
+# Build
+build/
+
+# Binary or source test
+test
+bin/
+client.cpp
+server.cpp
+
+# External library
+external/
+libuv-prefix/
+uvw-prefix/
+nlohmann-prefix/
+
+# Temporainly
+doc/
+diagrams/
+unit_test/include
+unit_test/lib64
+gtest
+
+gvirtus/backend/gvirtus-backend
+
+gvirtus/uWebSockets-prefix/
+
+# models
+*.pth

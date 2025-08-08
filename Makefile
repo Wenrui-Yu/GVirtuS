@@ -1,4 +1,4 @@
-.PHONY: docker-build-push-dev docker-build-push-prod run-gvirtus-backend-dev run-gvirtus-tests stop-gvirtus
+.PHONY: docker-build-push-dev docker-build-push-prod run-gvirtus-backend-dev run-gvirtus-tests stop-gvirtus docker-build-openpose run-openpose-test stop-openpose-test
 
 docker-build-push-dev:
 	docker buildx build \
@@ -52,3 +52,28 @@ run-gvirtus-tests:
 
 stop-gvirtus:
 	docker stop gvirtus
+
+
+docker-build-openpose:
+	docker buildx build \
+		--platform linux/amd64 \
+		--push \
+		--no-cache \
+		-f examples/openpose/Dockerfile \
+		-t darsh916/openpose_gvirtus:cuda12.6 \
+		examples/openpose	
+
+
+run-openpose-test:
+	docker run --rm \
+		--name openpose_test_container \
+		--network host \
+		-v ./examples/openpose/media:/opt/openpose/examples/media \
+		-v ./examples/openpose:/opt/openpose/examples/gvirtus \
+		-v ./examples/openpose/properties.json:/opt/GVirtuS/etc/properties.json \
+		-v ./examples/openpose/entrypoint.sh:/entrypoint.sh \
+		darsh916/openpose_gvirtus:cuda12.6 \
+		bash /entrypoint.sh
+
+stop-openpose-test:
+	docker stop openpose_test_container || true

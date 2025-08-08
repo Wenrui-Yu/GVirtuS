@@ -10,11 +10,13 @@
 #include <openpose/flags.hpp>
 // OpenPose dependencies
 #include <openpose/headers.hpp>
+#include <iostream>
+
 
 // Custom OpenPose flags
 // Producer
 // change the path to an image you want to process
-DEFINE_string(image_path, "/gvirtus/examples/openpose/media/img-20250729-wa0007.jpg",
+DEFINE_string(image_path, "/opt/openpose/examples/media/img-20250729-wa0007.jpg", 
     "Process an image. Read all standard formats (jpg, png, bmp, etc.).");
 // Display
 DEFINE_bool(no_display,                 false,
@@ -36,8 +38,14 @@ void display(const std::shared_ptr<std::vector<std::shared_ptr<op::Datum>>>& dat
             {
                 // cv::imshow(OPEN_POSE_NAME_AND_VERSION + " - Tutorial C++ API", cvMat);
                 // cv::waitKey(0);
-                cv::imwrite("/gvirtus/examples/openpose/output_pose.jpg", cvMat);
-                op::opLog("Output saved to /gvirtus/examples/openpose/output_pose.jpg", op::Priority::High);
+                // cv::imwrite("/opt/openpose/examples/media/output_pose.jpg", cvMat);
+                bool success = cv::imwrite("/opt/openpose/examples/media/output_pose.jpg", cv::imwrite("/opt/openpose/examples/media/output_pose.jpg", cvMat));
+                if (!success)
+                    std::cerr << "⚠️ Failed to write output_pose.jpg!" << std::endl;
+                else
+                    std::cout << "✅ Image saved to /opt/openpose/examples/media/output_pose.jpg" << std::endl;
+
+                op::opLog("Output saved to /opt/openpose/examples/media/output_pose.jpg", op::Priority::High);
             }
             else
                 op::opLog("Empty cv::Mat as output.", op::Priority::High, __LINE__, __FUNCTION__, __FILE__);
@@ -90,6 +98,7 @@ int tutorialApiCpp()
 
         // Process and display image
         const cv::Mat cvImageToProcess = cv::imread(FLAGS_image_path);
+        std::cout<<"input image path "<<FLAGS_image_path<<std::endl;
         const op::Matrix imageToProcess = OP_CV2OPCONSTMAT(cvImageToProcess);
         auto datumProcessed = opWrapper.emplaceAndPop(imageToProcess);
         if (datumProcessed != nullptr)

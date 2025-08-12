@@ -1,132 +1,104 @@
-// Based on: https://github.com/CMU-Perceptual-Computing-Lab/openpose/blob/master/examples/tutorial_api_cpp/01_body_from_image_default.cpp
-
-// ----------------------------- OpenPose C++ API Tutorial - Example 1 - Body from image -----------------------------
-// It reads an image, process it, and displays it with the pose keypoints.
-
-// Third-party dependencies
 #include <opencv2/opencv.hpp>
-// Command-line user interface
+#include <filesystem>
+#include <string>
+
 #define OPENPOSE_FLAGS_DISABLE_POSE
 #include <openpose/flags.hpp>
-// OpenPose dependencies
 #include <openpose/headers.hpp>
-#include <iostream>
 
+// Defaults point to the bind-mounted folder inside the container
+DEFINE_string(image_path, "/opt/openpose/examples/media/COCO_val2014_000000000589.jpg",
+              "Input image path.");
+DEFINE_string(output_dir, "/opt/openpose/examples/media",
+              "Where the rendered image will be saved.");
+DEFINE_string(output_name, "",
+              "Optional output filename; if empty, uses <input>_pose.png.");
+DEFINE_bool(no_display, true, "Disable visual display.");
 
-// Custom OpenPose flags
-// Producer
-// change the path to an image you want to process
-DEFINE_string(image_path, "/opt/openpose/examples/media/img-20250729-wa0007.jpg", 
-    "Process an image. Read all standard formats (jpg, png, bmp, etc.).");
-// Display
-DEFINE_bool(no_display,                 false,
-    "Enable to disable the visual display.");
-
-// This worker will just read and return all the jpg files in a directory
-void display(const std::shared_ptr<std::vector<std::shared_ptr<op::Datum>>>& datumsPtr)
+static std::string deriveOutputPath(const std::string& inputPath,
+                                    const std::string& outDir,
+                                    const std::string& outName)
 {
-    try
-    {
-        // User's displaying/saving/other processing here
-            // datum.cvOutputData: rendered frame with pose or heatmaps
-            // datum.poseKeypoints: Array<float> with the estimated pose
-        if (datumsPtr != nullptr && !datumsPtr->empty())
-        {
-            // Display image
-            const cv::Mat cvMat = OP_OP2CVCONSTMAT(datumsPtr->at(0)->cvOutputData);
-            if (!cvMat.empty())
-            {
-                // cv::imshow(OPEN_POSE_NAME_AND_VERSION + " - Tutorial C++ API", cvMat);
-                // cv::waitKey(0);
-                // cv::imwrite("/opt/openpose/examples/media/output_pose.jpg", cvMat);
-                bool success = cv::imwrite("/opt/openpose/examples/media/output_pose.jpg", cv::imwrite("/opt/openpose/examples/media/output_pose.jpg", cvMat));
-                if (!success)
-                    std::cerr << "⚠️ Failed to write output_pose.jpg!" << std::endl;
-                else
-                    std::cout << "✅ Image saved to /opt/openpose/examples/media/output_pose.jpg" << std::endl;
+    namespace fs = std::filesystem;
+    fs::path dir(outDir);
+    if (!fs::exists(dir)) fs::create_directories(dir);
 
-                op::opLog("Output saved to /opt/openpose/examples/media/output_pose.jpg", op::Priority::High);
+    if (!outName.empty()) return (dir / outName).string();
+
+    fs::path in(inputPath);
+    std::string stem = in.has_stem() ? in.stem().string() : "output";
+    return (dir / (stem + "_pose.png")).string();
+}
+
+void saveOutput(const std::shared_ptr<std::vector<std::shared_ptr<op::Datum>>>& datumsPtr)
+{
+    try {
+        if (datumsPtr && !datumsPtr->empty()) {
+            const cv::Mat cvMat = OP_OP2CVCONSTMAT(datumsPtr->at(0)->cvOutputData);
+            if (!cvMat.empty()) {
+                const auto outPath = deriveOutputPath(FLAGS_image_path, FLAGS_output_dir, FLAGS_output_name);
+                if (!cv::imwrite(outPath, cvMat))
+                    op::opLog("Failed to write image to: " + outPath, op::Priority::High);
+                else
+                    op::opLog("Saved rendered pose image to: " + outPath, op::Priority::High);
+            } else {
+                op::opLog("Empty cv::Mat as output.", op::Priority::High);
             }
-            else
-                op::opLog("Empty cv::Mat as output.", op::Priority::High, __LINE__, __FUNCTION__, __FILE__);
-        }
-        else
+        } else {
             op::opLog("Nullptr or empty datumsPtr found.", op::Priority::High);
-    }
-    catch (const std::exception& e)
-    {
+        }
+    } catch (const std::exception& e) {
         op::error(e.what(), __LINE__, __FUNCTION__, __FILE__);
     }
 }
 
 void printKeypoints(const std::shared_ptr<std::vector<std::shared_ptr<op::Datum>>>& datumsPtr)
 {
-    try
-    {
-        // Example: How to use the pose keypoints
-        if (datumsPtr != nullptr && !datumsPtr->empty())
-        {
-            // Alternative 1
+    try {
+        if (datumsPtr && !datumsPtr->empty())
             op::opLog("Body keypoints: " + datumsPtr->at(0)->poseKeypoints.toString(), op::Priority::High);
-        }
         else
             op::opLog("Nullptr or empty datumsPtr found.", op::Priority::High);
-    }
-    catch (const std::exception& e)
-    {
+    } catch (const std::exception& e) {
         op::error(e.what(), __LINE__, __FUNCTION__, __FILE__);
     }
 }
 
 int tutorialApiCpp()
 {
-    try
-    {
+    try {
         op::opLog("Starting OpenPose demo...", op::Priority::High);
         const auto opTimer = op::getTimerInit();
 
-        // Configuring OpenPose
-        op::opLog("Configuring OpenPose...", op::Priority::High);
         op::Wrapper opWrapper{op::ThreadManagerMode::Asynchronous};
-        // Set to single-thread (for sequential processing and/or debugging and/or reducing latency)
-        if (FLAGS_disable_multi_thread)
-            opWrapper.disableMultiThreading();
-
-        // Starting OpenPose
-        op::opLog("Starting thread(s)...", op::Priority::High);
+        if (FLAGS_disable_multi_thread) opWrapper.disableMultiThreading();
         opWrapper.start();
 
-        // Process and display image
         const cv::Mat cvImageToProcess = cv::imread(FLAGS_image_path);
-        std::cout<<"input image path "<<FLAGS_image_path<<std::endl;
+        if (cvImageToProcess.empty()) {
+            op::opLog("Could not read input image: " + FLAGS_image_path, op::Priority::High);
+            return -1;
+        }
+
         const op::Matrix imageToProcess = OP_CV2OPCONSTMAT(cvImageToProcess);
         auto datumProcessed = opWrapper.emplaceAndPop(imageToProcess);
-        if (datumProcessed != nullptr)
-        {
+        if (datumProcessed) {
             printKeypoints(datumProcessed);
-            if (!FLAGS_no_display)
-                display(datumProcessed);
-        }
-        else
+            saveOutput(datumProcessed);
+        } else {
             op::opLog("Image could not be processed.", op::Priority::High);
+        }
 
-        // Measuring total time
-        op::printTime(opTimer, "OpenPose demo successfully finished. Total time: ", " seconds.", op::Priority::High);
-
-        // Return
+        op::printTime(opTimer, "OpenPose demo successfully finished. Total time: ",
+                      " seconds.", op::Priority::High);
         return 0;
-    }
-    catch (const std::exception&)
-    {
+    } catch (const std::exception&) {
         return -1;
     }
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
-    // Parsing command line flags
     gflags::ParseCommandLineFlags(&argc, &argv, true);
-
-    // Running tutorialApiCpp
     return tutorialApiCpp();
 }

@@ -92,6 +92,18 @@ Ensure your changes are saved.
 
 Restart the backend and re-run the tests using the scripts above.
 
+---
+
+> [!NOTE]
+> The GVirtuS backend and frontend communicate over localhost (127.0.0.1), so both processes must run on the same machine.
+
+> [!NOTE]
+> The `make run-gvirtus-backend-dev` command starts a Docker container with all necessary GVirtuS dependencies and mounts your local repository files required. This means your local changes are automatically used inside the container, making development and testing fast and efficient—no need to git push or docker push. The `make run-gvirtus-tests` command does **not** start a new container. Instead, it opens a new shell inside the already running backend container and executes the GVirtuS tests there.
+
+> [!IMPORTANT]
+> If you make **any changes** to the test files, you must restart the GVirtuS backend using `make stop-gvirtus` followed by `make run-gvirtus-backend-dev`. Otherwise, your test changes will not be picked up.
+
+--- 
 
 # 📦 GVirtuS–OpenPose Integration
 
@@ -146,8 +158,8 @@ If the **GVirtuS backend** is running on a GPU server (or edge device) and the *
 
   ```json
   {
-      "suite": "tcp/ip",                   # Replace rdma-roce if you're using rdma
-      "protocol": "tcp",                   # Replace roce if you're using rdma
+      "suite": "tcp/ip",                   // Replace rdma-roce if you're using rdma
+      "protocol": "tcp",                   // Replace roce if you're using rdma
       "server_address": "130.225.243.38",
       "port": "8888"
   }
@@ -171,8 +183,8 @@ If both the **GVirtuS backend** and **frontend** are running on the **same serve
 
   ```json
   {
-      "suite": "tcp/ip",                        // <-- Replace rdma-roce if you're using rdma
-      "protocol": "tcp",                        // <-- Replace roce if you're using rdma
+      "suite": "tcp/ip",                        // Replace rdma-roce if you're using rdma
+      "protocol": "tcp",                        // Replace roce if you're using rdma
       "server_address": "127.0.0.1",
       "port": "8888"
   }
@@ -192,15 +204,6 @@ This will connect to the GVirtuS backend component, **transparently redirect all
 
 ---
 
-
-> [!NOTE]
-> The GVirtuS backend and frontend communicate over localhost (127.0.0.1), so both processes must run on the same machine.
-
-> [!NOTE]
-> The `make run-gvirtus-backend-dev` command starts a Docker container with all necessary GVirtuS dependencies and mounts your local repository files required. This means your local changes are automatically used inside the container, making development and testing fast and efficient—no need to git push or docker push. The `make run-gvirtus-tests` command does **not** start a new container. Instead, it opens a new shell inside the already running backend container and executes the GVirtuS tests there.
-
-> [!IMPORTANT]
-> If you make **any changes** to the test files, you must restart the GVirtuS backend using `make stop-gvirtus` followed by `make run-gvirtus-backend-dev`. Otherwise, your test changes will not be picked up.
 
 # ⚠️ Disclaimers
 

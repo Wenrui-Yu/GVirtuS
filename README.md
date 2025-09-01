@@ -149,6 +149,9 @@ If the **GVirtuS backend** is running on a GPU server (or edge device) and the *
   ```
   {ROOT_FOLDER}/GVirtuS/examples/openpose/properties.json
   ```
+
+Here, the {ROOT_FOLDER} would be your Present Working Directory(PWD) where GVirtuS has repo been installed (ex: home/darshan)
+
 * Get the backend device’s IP address using "ifconfig" command on Backend device.
 
 * Modify {ROOT_FOLDER}/GVirtuS/examples/openpose/properties.json 

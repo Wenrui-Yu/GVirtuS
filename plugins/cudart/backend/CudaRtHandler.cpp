@@ -124,8 +124,8 @@ void CudaRtHandler::UnregisterFatBinary(std::string &handler) {
     map<string, void **>::iterator it = mpFatBinary->find(handler);
     if (it == mpFatBinary->end()) return;
     /* FIXME: think about freeing memory */
-    LOG4CPLUS_DEBUG(logger, "Unregistered FatBinary "
-                                << it->second << " with handler " << handler);
+    // LOG4CPLUS_DEBUG(logger, "Unregistered FatBinary "
+    //                             << it->second << " with handler " << handler);
     mpFatBinary->erase(it);
 }
 

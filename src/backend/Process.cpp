@@ -123,7 +123,7 @@ void Process::Start() {
         std::shared_ptr<Buffer> input_buffer = std::make_shared<Buffer>();
 
         while (getstring(client_comm, routine)) {
-            LOG4CPLUS_DEBUG(logger, "Received routine " << routine);
+            // LOG4CPLUS_DEBUG(logger, "Received routine " << routine);
 
             input_buffer->Reset(client_comm);
 
@@ -148,7 +148,7 @@ void Process::Start() {
 
             // scrive il risultato sul communicator
             result->Dump(client_comm);
-            LOG4CPLUS_DEBUG(logger, "[Process " << getpid() << "]: Routine '" << routine << "' returned " << result->GetExitCode() << ".");
+            // LOG4CPLUS_DEBUG(logger, "[Process " << getpid() << "]: Routine '" << routine << "' returned " << result->GetExitCode() << ".");
         }
         Notify("process-ended");
     };

@@ -35,13 +35,13 @@ Before proceeding, ensure the following dependencies are installed on your syste
 1) `git clone` the **GVirtuS** main repository: 
 
 ```   
-git clone https://github.com/tgasla/GVirtuS.git
+git clone -b dev https://github.com/ecn-aau/GVirtuS.git
 ```
 
 2) CD into the repo directory:
 
 ```
-cd gvirtus
+cd GVirtuS
 ```
 
 # 📊 GVirtuS Implementation Status
@@ -91,6 +91,112 @@ make stop-gvirtus
 Ensure your changes are saved.
 
 Restart the backend and re-run the tests using the scripts above.
+
+
+## 📦 GVirtuS- Openpose Integration
+1) `git clone` the **GVirtuS** main repository: 
+
+```   
+git clone -b dev https://github.com/ecn-aau/GVirtuS.git
+```
+
+2) CD into the repo directory:
+```
+cd GVirtuS
+```
+
+3) Start the GVirtuS Backend**
+```
+make run-gvirtus-backend-dev
+```
+
+Note: Before running to openpose-GvirtuS integrated application on frontend device(non-GPU device), make sure the GVirtuS frontend component properties.json file carries IP and port of GVirtuS backend component running edge device/system. [Similalrly endpoint suite also if you're changing from tcp to rdma or visaversa]
+Get the IP of GVirtuS component system by using ifconfig command.
+Replace that inside the GVirtuS/examples/openpose/properties.json
+For example: 
+```
+        "suite": "tcp/ip",
+        "protocol": "tcp",
+        "server_address": "130.225.243.38",
+        "port": "8888"
+```
+
+4) Start the Openpose-GVirtuS demo application**
+```
+make run-openpose
+```
+
+This runs the connects with GVirtuS-backend component and transparently transfer all required cuda calls and bring the back the results into frontend component.
+
+Here’s a polished and properly structured **README-style section** for your integration guide:
+
+---
+
+# 📦 GVirtuS–OpenPose Integration
+
+The below instructions explains how to set up and run **OpenPose integrated with GVirtuS**, enabling CUDA workloads to be executed on a backend GPU server while running the application on a non-GPU frontend device.
+
+---
+
+## 🚀 Setup Instructions
+
+### 1. Clone the GVirtuS Repository
+
+Clone the development branch of the GVirtuS project:
+
+```bash
+git clone -b dev https://github.com/ecn-aau/GVirtuS.git
+```
+
+### 2. Navigate into the Repository
+
+```bash
+cd GVirtuS
+```
+
+### 3. Start the GVirtuS Backend
+
+Launch the backend service on the GPU-enabled device:
+
+```bash
+make run-gvirtus-backend-dev
+```
+
+> **Note**:
+>
+> * Before running the OpenPose–GVirtuS integrated application on a **frontend (non-GPU) device**, ensure that the `properties.json` configuration file in the frontend contains the correct **IP address**, **port**, and **endpoint suite** of the backend.
+> * The backend device’s IP address can be obtained using the `ifconfig` command.
+> * Update the file at:
+>
+>   ```
+>   {ROOT_DIRECTORY}/GVirtuS/examples/openpose/properties.json
+>   ```
+
+Example configuration:
+
+```json
+{
+    "suite": "tcp/ip",
+    "protocol": "tcp",
+    "server_address": "130.225.243.38",
+    "port": "8888"
+}
+```
+
+---
+
+### 4. Run the OpenPose–GVirtuS Demo Application
+
+On the frontend device, start the integrated OpenPose application:
+
+```bash
+make run-openpose
+```
+
+This will connect to the GVirtuS backend component, **transparently redirect all CUDA calls** to the GPU-enabled backend system, and return the results to the frontend application.
+
+---
+
 
 > [!NOTE]
 > The GVirtuS backend and frontend communicate over localhost (127.0.0.1), so both processes must run on the same machine.

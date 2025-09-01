@@ -150,7 +150,7 @@ If the **GVirtuS backend** is running on a GPU server (or edge device) and the *
   {ROOT_FOLDER}/GVirtuS/examples/openpose/properties.json
   ```
 
-Here, the {ROOT_FOLDER} would be your Present Working Directory(PWD) where GVirtuS has repo been installed (ex: home/darshan)
+Here, the {ROOT_FOLDER} would be your Present Working Directory(PWD) where GVirtuS repo has been installed (ex: home/darshan)
 
 * Get the backend device’s IP address using "ifconfig" command on Backend device.
 
@@ -198,7 +198,7 @@ If both the **GVirtuS backend** and **frontend** are running on the **same serve
 On the frontend device, start the integrated OpenPose application:
 
 ```bash
-make run-openpose
+make run-openpose-test
 ```
 
 This will connect to the GVirtuS backend component, **transparently redirect all CUDA calls** to the GPU-enabled backend system, and return the results to the frontend application.

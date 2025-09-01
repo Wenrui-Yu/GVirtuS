@@ -149,18 +149,16 @@ If the **GVirtuS backend** is running on a GPU server (or edge device) and the *
   ```
   {ROOT_FOLDER}/GVirtuS/examples/openpose/properties.json
   ```
-* Get the backend device’s IP address using:
+* Get the backend device’s IP address using "ifconfig" command on Backend device.
 
-  ```bash
-  ifconfig
-  ```
-* Example configuration: 
+* Modify {ROOT_FOLDER}/GVirtuS/examples/openpose/properties.json 
+Example configuration: 
 
   ```json
   {
       "suite": "tcp/ip",                   // Replace rdma-roce if you're using rdma
       "protocol": "tcp",                   // Replace roce if you're using rdma
-      "server_address": "130.225.243.38",
+      "server_address": "130.225.243.38",    //Replace with Backend device IP
       "port": "8888"
   }
   ```
@@ -176,7 +174,7 @@ If both the **GVirtuS backend** and **frontend** are running on the **same serve
 * Instead, set the server address to **127.0.0.1** in:
 
   ```
-  GVirtuS/examples/openpose/properties.json
+  {ROOT_FOLDER}/GVirtuS/examples/openpose/properties.json
   ```
 
 * Example configuration:

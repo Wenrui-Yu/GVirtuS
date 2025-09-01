@@ -147,14 +147,14 @@ If the **GVirtuS backend** is running on a GPU server (or edge device) and the *
 * File to update:
 
   ```
-  GVirtuS/examples/openpose/properties.json
+  {ROOT_FOLDER}/GVirtuS/examples/openpose/properties.json
   ```
 * Get the backend device’s IP address using:
 
   ```bash
   ifconfig
   ```
-* Example configuration:
+* Example configuration: 
 
   ```json
   {

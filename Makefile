@@ -64,7 +64,7 @@ docker-build-openpose:
 		examples/openpose	
 
 
-run-openpose-test:
+run-openpose-test: 
 	docker run --rm \
 		--name openpose_test_container \
 		--network host \

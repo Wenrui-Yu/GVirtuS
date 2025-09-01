@@ -93,45 +93,6 @@ Ensure your changes are saved.
 Restart the backend and re-run the tests using the scripts above.
 
 
-## 📦 GVirtuS- Openpose Integration
-1) `git clone` the **GVirtuS** main repository: 
-
-```   
-git clone -b dev https://github.com/ecn-aau/GVirtuS.git
-```
-
-2) CD into the repo directory:
-```
-cd GVirtuS
-```
-
-3) Start the GVirtuS Backend**
-```
-make run-gvirtus-backend-dev
-```
-
-Note: Before running to openpose-GvirtuS integrated application on frontend device(non-GPU device), make sure the GVirtuS frontend component properties.json file carries IP and port of GVirtuS backend component running edge device/system. [Similalrly endpoint suite also if you're changing from tcp to rdma or visaversa]
-Get the IP of GVirtuS component system by using ifconfig command.
-Replace that inside the GVirtuS/examples/openpose/properties.json
-For example: 
-```
-        "suite": "tcp/ip",
-        "protocol": "tcp",
-        "server_address": "130.225.243.38",
-        "port": "8888"
-```
-
-4) Start the Openpose-GVirtuS demo application**
-```
-make run-openpose
-```
-
-This runs the connects with GVirtuS-backend component and transparently transfer all required cuda calls and bring the back the results into frontend component.
-
-Here’s a polished and properly structured **README-style section** for your integration guide:
-
----
-
 # 📦 GVirtuS–OpenPose Integration
 
 The below instructions explains how to set up and run **OpenPose integrated with GVirtuS**, enabling CUDA workloads to be executed on a backend GPU server while running the application on a non-GPU frontend device.
@@ -165,23 +126,57 @@ make run-gvirtus-backend-dev
 > **Note**:
 >
 > * Before running the OpenPose–GVirtuS integrated application on a **frontend (non-GPU) device**, ensure that the `properties.json` configuration file in the frontend contains the correct **IP address**, **port**, and **endpoint suite** of the backend.
-> * The backend device’s IP address can be obtained using the `ifconfig` command.
-> * Update the file at:
->
->   ```
->   {ROOT_DIRECTORY}/GVirtuS/examples/openpose/properties.json
->   ```
 
-Example configuration:
+### Case 1: Distributed Setup (Different Devices)
 
-```json
-{
-    "suite": "tcp/ip",
-    "protocol": "tcp",
-    "server_address": "130.225.243.38",
-    "port": "8888"
-}
-```
+If the **GVirtuS backend** is running on a GPU server (or edge device) and the **frontend** is on a different non-GPU device:
+
+* Update the **frontend configuration file** with the backend’s IP and port.
+* File to update:
+
+  ```
+  GVirtuS/examples/openpose/properties.json
+  ```
+* Get the backend device’s IP address using:
+
+  ```bash
+  ifconfig
+  ```
+* Example configuration:
+
+  ```json
+  {
+      "suite": "tcp/ip",                   // <-- Replace rdma-roce if you're using rdma
+      "protocol": "tcp",                   // <-- Replace roce if you're using rdma
+      "server_address": "130.225.243.38",
+      "port": "8888"
+  }
+  ```
+
+---
+
+### Case 2: Local Setup (Same Device)
+
+If both the **GVirtuS backend** and **frontend** are running on the **same server or edge device**:
+
+* No need to find the external IP address.
+
+* Instead, set the server address to **127.0.0.1** in:
+
+  ```
+  GVirtuS/examples/openpose/properties.json
+  ```
+
+* Example configuration:
+
+  ```json
+  {
+      "suite": "tcp/ip",                        // <-- Replace rdma-roce if you're using rdma
+      "protocol": "tcp",                        // <-- Replace roce if you're using rdma
+      "server_address": "127.0.0.1",
+      "port": "8888"
+  }
+  ```
 
 ---
 
@@ -212,4 +207,10 @@ This will connect to the GVirtuS backend component, **transparently redirect all
 > [!IMPORTANT]
 > GVirtuS is currently not production-ready.
 > It is **not thread-safe** and has known **memory leaks**. Use it with caution in experimental or non-critical environments.
+
+
+
+
+
+
 

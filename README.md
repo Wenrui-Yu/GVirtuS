@@ -146,8 +146,8 @@ If the **GVirtuS backend** is running on a GPU server (or edge device) and the *
 
   ```json
   {
-      "suite": "tcp/ip",                   // <-- Replace rdma-roce if you're using rdma
-      "protocol": "tcp",                   // <-- Replace roce if you're using rdma
+      "suite": "tcp/ip",                   # Replace rdma-roce if you're using rdma
+      "protocol": "tcp",                   # Replace roce if you're using rdma
       "server_address": "130.225.243.38",
       "port": "8888"
   }

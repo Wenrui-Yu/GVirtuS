@@ -3,7 +3,7 @@ from torchvision import models, transforms
 from PIL import Image
 
 # Load pretrained VGG-16
-model = models.vgg16(pretrained=True)
+model = models.vgg16(pretrained=True).to("cuda")
 model.eval()
 
 # Define preprocessing (resize, center crop, normalize with ImageNet stats)
@@ -23,7 +23,7 @@ img = Image.open('image.jpg').convert('RGB')
 input_tensor = preprocess(img)
 
 # Create a mini-batch as expected by the model (batch size 1)
-input_batch = input_tensor.unsqueeze(0)  # shape: [1, 3, 224, 224]
+input_batch = input_tensor.unsqueeze(0).to("cuda")  # shape: [1, 3, 224, 224]
 
 # Run inference
 with torch.no_grad():
